@@ -904,13 +904,19 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
   .story-nav .pill{flex:1;text-align:center}
 }
 
+
+/* Asset-name/fallback fix */
+#stage{
+  background:#f6f1e5 url("poster-home-hq.webp") center/cover no-repeat!important;
+}
+
 </style>
 </head>
 <body>
 <div id="stage">
- <video id="idle1" class="media" muted playsinline autoplay loop preload="auto" src="idle-start.mp4" poster="poster-home.webp"></video>
-  <video id="video1" class="media transition-video" muted playsinline preload="none" src="video1-web.mp4" poster="poster-bio.webp"></video>
-  <video id="video2" class="media transition-video" muted playsinline preload="none" src="video2-web-fast-balanced.mp4" poster="poster-approach.webp"></video>
+ <video id="idle1" class="media" muted playsinline autoplay loop preload="auto" src="idle-start.mp4" poster="poster-home-hq.webp"></video>
+  <video id="video1" class="media transition-video" muted playsinline preload="none" src="video1-web.mp4" poster="poster-bio-hq.webp"></video>
+  <video id="video2" class="media transition-video" muted playsinline preload="none" src="video2-web.mp4" poster="poster-approach-hq.webp"></video>
  <div id="dream"></div>
 
  <div id="home" class="newcopy"><h1>Giulio Rocchi</h1><div class="sub">Psichiatra | psicoterapeuta</div><div class="city">A Genova, Novi Ligure e online.</div><div class="newactions"><button class="pill primary" id="bookHome">Prenota una visita</button><button class="pill" id="who">Chi sono</button></div></div>
