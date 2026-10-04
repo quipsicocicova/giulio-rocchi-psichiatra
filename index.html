@@ -1368,6 +1368,33 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
   #bio::before,#bio::after,#approach::before,#approach::after{content:none!important;display:none!important}
 }
 
+
+/* MOBILE BIO ONLY — preserve the approved Home exactly as-is */
+@media(max-width:760px){
+  #bio{
+    padding-top:max(110px,calc(env(safe-area-inset-top) + 92px))!important;
+    padding-bottom:9vh!important;
+  }
+  #bioPast,#bioCurrent{
+    margin:0 auto!important;
+  }
+  #homeControl{
+    z-index:50!important;
+  }
+  #bio .story-nav{
+    position:relative!important;
+    z-index:5!important;
+    pointer-events:auto!important;
+  }
+  #bio .story-nav button,
+  #currentBtn,#approachBtn,#backHome,#backPast{
+    position:relative!important;
+    z-index:6!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1580,18 +1607,15 @@ document.getElementById('currentBtn').addEventListener('click',(e)=>{
   e.preventDefault();
   e.stopPropagation();
   approachReady=false;
+
   bioPast.classList.remove('active');
-  setTimeout(()=>{
-    bioCurrent.classList.add('active');
-    window.scrollTo({top:0,behavior:'smooth'});
-    const approachButton=document.getElementById('approachBtn');
-    approachButton.style.pointerEvents='none';
-    setTimeout(()=>{
-      approachButton.classList.add('show');
-      approachButton.style.pointerEvents='auto';
-      approachReady=true;
-    },650);
-  },280);
+  bioCurrent.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  const approachButton=document.getElementById('approachBtn');
+  approachButton.classList.add('show');
+  approachButton.style.pointerEvents='auto';
+  approachReady=true;
 });
 
 document.getElementById('approachBtn').addEventListener('click',(e)=>{
