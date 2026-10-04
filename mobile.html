@@ -23,10 +23,34 @@
   #preloader img{animation:none}
 }
 
+
+/* Authoritative non-blocking preloader */
+#preloader{
+  position:fixed!important;z-index:99999!important;inset:0!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  background:#f6f1e5!important;opacity:1;visibility:visible;
+  transition:opacity .5s ease,visibility 0s linear .5s;
+}
+#preloader.done{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+.loader-inner{width:min(210px,56vw);text-align:center;color:#0d3933}
+.loader-inner img{display:block;width:68px;height:68px;object-fit:contain;margin:0 auto 16px;animation:loaderPulse 1.6s ease-in-out infinite}
+.loader-label{font:400 12px/1.2 Baskerville,Palatino,Georgia,serif;font-variant:small-caps;text-transform:lowercase;letter-spacing:.18em;margin-bottom:10px}
+.loader-track{height:2px;width:100%;background:rgba(13,57,51,.16);overflow:hidden}
+.loader-track i{display:block;width:100%;height:100%;background:#0d3933;transform:scaleX(0);transform-origin:left;transition:transform .18s linear}
+#loaderPercent{margin-top:8px;font:12px/1.2 Arial,sans-serif;letter-spacing:.08em}
+@keyframes loaderPulse{0%,100%{opacity:.45;transform:scale(.96)}50%{opacity:1;transform:scale(1.03)}}
+@media(prefers-reduced-motion:reduce){.loader-inner img{animation:none}}
+
 </style></head><body>
 <div id="preloader" aria-label="Caricamento">
-  <img src="logogramma-rocchi.png" alt="">
+  <div class="loader-inner">
+    <img src="logogramma-rocchi.png" alt="">
+    <div class="loader-label">Loading</div>
+    <div class="loader-track"><i id="loaderBar"></i></div>
+    <div id="loaderPercent">0%</div>
+  </div>
 </div>
+
 <section id="home" class="view on hero"><video muted playsinline autoplay loop preload="metadata" poster="poster-home-mobile.webp" src="idle-start-mobile-ios.mp4"></video><div class="copy"><h1>Giulio Rocchi</h1><div class="sub">Psichiatra | psicoterapeuta</div><div class="city">A Genova, Novi Ligure e online.</div><div class="actions"><button class="btn primary book">Prenota una visita</button><button class="btn" id="bioGo">Chi sono</button></div></div></section>
 <section id="bio" class="view reading" style="background-image:url('poster-bio-hq.webp')"><article id="past" class="card"><h2>Chi sono</h2><p>Sono Giulio Rocchi, medico chirurgo specialista in Psichiatria, laureato e specializzato presso l’Università degli Studi di Genova.</p><p>Nel corso del mio percorso professionale ho maturato esperienza nella psichiatria ospedaliera e territoriale, nel Servizio Psichiatrico di Diagnosi e Cura e in Pronto Soccorso. Ho inoltre ricoperto incarichi di Direzione Sanitaria in servizi dedicati alla salute mentale e alle dipendenze.</p><p>Affianco all’attività clinica l’interesse per la ricerca neuroscientifica e per lo studio dei meccanismi biologici coinvolti nei disturbi mentali. Sono coautore del volume <em>A Working Model of Affectivity</em>, dedicato ai circuiti neurali dell’affettività, al temperamento e ai disturbi affettivi, e di pubblicazioni scientifiche internazionali in ambito psichiatrico e neuroscientifico.</p><div class="actions"><button class="back" id="homeBack">←</button><button class="btn primary" id="currentGo">Cosa faccio attualmente →</button></div></article><article id="current" class="card"><h2>Attualmente</h2><p>Sono Dirigente Medico presso l’ASL di Alessandria e lavoro presso il reparto di Psichiatria dell’Ospedale San Giacomo di Novi Ligure.</p><p>Parallelamente all’attività ospedaliera ricevo privatamente a Genova e Novi Ligure e svolgo consulenze psichiatriche anche online.</p><p>Nel mio lavoro pongo al centro l’ascolto e la personalizzazione del percorso di cura, integrando il rigore clinico e scientifico con l’attenzione alla dimensione simbolica e alla psicologia analitica di orientamento junghiano.</p><div class="actions"><button class="back" id="pastBack">←</button><button class="btn primary" id="approachGo">Il mio approccio →</button></div></article></section>
 <section id="approach" class="view reading" style="background-image:url('poster-approach-hq.webp')"><article class="card"><h2>Il mio approccio</h2><p>Nel mio lavoro clinico integro la valutazione psichiatrica e l’attenzione alle evidenze scientifiche con alcuni riferimenti alla psicologia analitica di Carl Gustav Jung. Questo orientamento aiuta a non considerare la persona soltanto attraverso i sintomi o la diagnosi, ma a comprenderne la storia, le relazioni, le risorse e le difficoltà nel loro insieme.</p><p>L’obiettivo è costruire un percorso di cura che favorisca una maggiore consapevolezza di sé, strumenti più efficaci per affrontare i momenti di difficoltà e un miglior equilibrio nella vita quotidiana.</p><div class="actions"><button class="back" id="currentBack">←</button><button class="btn primary book">Prenota una visita →</button></div><img class="portrait" src="foto-giulio.png" alt="Giulio Rocchi"></article></section>
@@ -99,12 +123,12 @@ window.addEventListener('load',startIdle,{once:true});
 document.addEventListener('touchstart',startIdle,{once:true,passive:true});
 document.addEventListener('click',startIdle,{once:true});
 
-const preloader=document.getElementById('preloader');
+const legacyPreloader=document.getElementById('preloader');
 const preloadStarted=performance.now();
 function dismissPreloader(){
   const minimum=900;
   const elapsed=performance.now()-preloadStarted;
-  setTimeout(()=>preloader.classList.add('done'),Math.max(0,minimum-elapsed));
+  setTimeout(()=>legacyPreloader.classList.add('done'),Math.max(0,minimum-elapsed));
 }
 /* Prefer the initial poster + idle metadata, but never block the page for long. */
 const initialPoster=new Image();
@@ -122,4 +146,30 @@ Promise.race([
   startIdle();
   dismissPreloader();
 });
+
+/* Reliable visual loader: simulated progress, never blocks indefinitely. */
+(()=>{
+  const loader=document.getElementById('preloader');
+  const bar=document.getElementById('loaderBar');
+  const pct=document.getElementById('loaderPercent');
+  if(!loader||!bar||!pct)return;
+  let progress=0,closed=false;
+  const started=performance.now();
+  const paint=()=>{bar.style.transform=`scaleX(${progress/100})`;pct.textContent=`${Math.round(progress)}%`;};
+  const timer=setInterval(()=>{
+    if(closed)return;
+    if(progress<90) progress+=progress<55?4:progress<78?2:1;
+    paint();
+  },90);
+  const close=()=>{
+    if(closed)return; closed=true; clearInterval(timer);
+    progress=100; paint();
+    const wait=Math.max(0,700-(performance.now()-started));
+    setTimeout(()=>loader.classList.add('done'),wait+180);
+  };
+  window.addEventListener('load',()=>setTimeout(close,120),{once:true});
+  /* Hard escape hatch: loader can never trap the site. */
+  setTimeout(close,2600);
+  paint();
+})();
 </script></body></html>
