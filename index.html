@@ -835,13 +835,82 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
 
 #bioCurrent:not(.active){pointer-events:none!important}
 #bioCurrent:not(.active) #approachBtn{pointer-events:none!important}
+@media(max-width:760px){
+#bio{pointer-events:none!important}
+#bioPast,#bioCurrent{height:76dvh!important;max-height:calc(100dvh - 105px)!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important;touch-action:pan-y!important;pointer-events:none!important}
+#bioPast.active,#bioCurrent.active{pointer-events:auto!important}
+#approach{height:82dvh!important;max-height:calc(100dvh - 90px)!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important;touch-action:pan-y!important}
+#approach .approach-text{order:1!important}#approach .approach-photo{order:2!important}
+}
+/* === CLEAN FINAL NAVIGATION / MOBILE NATURAL PAGE SCROLL === */
+.story-nav{display:flex;align-items:center;gap:10px;margin-top:22px}
+.story-nav .rise{margin-top:0!important}
+.story-back{
+  width:48px;height:48px;flex:0 0 48px;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(13,57,51,.28);border-radius:9px;
+  background:rgba(246,241,229,.88);color:#0d3933;font-size:25px;line-height:1;
+  cursor:pointer;
+}
+.story-back:hover{background:#fffaf0}
+
+@media(max-width:760px){
+  /* The document itself scrolls. There are NO nested scrolling boxes. */
+  html,body{height:auto!important;min-height:100%!important;overflow-x:hidden!important}
+  body.story-reading{overflow-y:auto!important;background:#f6f1e5!important}
+  body.story-reading #stage{
+    position:relative!important;
+    height:auto!important;min-height:100dvh!important;
+    overflow:visible!important;
+  }
+  body.story-reading #dream,
+  body.story-reading .media,
+  body.story-reading .poster{
+    position:fixed!important;
+    width:100vw!important;height:100dvh!important;
+  }
+
+  #bioPast,#bioCurrent,#approach{
+    height:auto!important;max-height:none!important;
+    overflow:visible!important;touch-action:auto!important;
+    -webkit-overflow-scrolling:auto!important;
+  }
+  #bioPast.active,#bioCurrent.active{pointer-events:auto!important}
+
+  #bio{
+    height:auto!important;min-height:0!important;overflow:visible!important;
+  }
+
+  /* Current story panel becomes ordinary page content. */
+  #bioPast,#bioCurrent{
+    position:relative!important;
+    left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+    width:90%!important;margin:18vh auto 10vh!important;
+    transform:none!important;
+  }
+  #bioPast:not(.active),#bioCurrent:not(.active){display:none!important}
+
+  #approach{
+    position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+    width:90%!important;margin:18vh auto 10vh!important;
+    transform:none!important;
+    display:none!important;
+  }
+  #approach.show{display:flex!important;flex-direction:column!important}
+  #approach .approach-text{order:1!important}
+  #approach .approach-photo{order:2!important;height:auto!important;aspect-ratio:4/5;margin:28px 0 0!important}
+
+  .story-nav{width:100%}
+  .story-nav .pill{flex:1;text-align:center}
+}
+
 </style>
 </head>
 <body>
 <div id="stage">
- <video id="idle1" class="media" muted playsinline autoplay loop preload="auto" src="idle-start.mp4"></video>
-  <video id="video1" class="media transition-video" muted playsinline preload="metadata" src="video1-web.mp4"></video>
-  <video id="video2" class="media transition-video" muted playsinline preload="none" src="video2-web.mp4"></video>
+ <video id="idle1" class="media" muted playsinline autoplay loop preload="auto" src="idle-start.mp4" poster="poster-home.webp"></video>
+  <video id="video1" class="media transition-video" muted playsinline preload="none" src="video1-web.mp4" poster="poster-bio.webp"></video>
+  <video id="video2" class="media transition-video" muted playsinline preload="none" src="video2-web-fast-balanced.mp4" poster="poster-approach.webp"></video>
  <div id="dream"></div>
 
  <div id="home" class="newcopy"><h1>Giulio Rocchi</h1><div class="sub">Psichiatra | psicoterapeuta</div><div class="city">A Genova, Novi Ligure e online.</div><div class="newactions"><button class="pill primary" id="bookHome">Prenota una visita</button><button class="pill" id="who">Chi sono</button></div></div>
@@ -851,14 +920,14 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
     <p>Sono Giulio Rocchi, medico chirurgo specialista in Psichiatria, laureato e specializzato presso l’Università degli Studi di Genova.</p>
     <p>Nel corso del mio percorso professionale ho maturato esperienza nella psichiatria ospedaliera e territoriale, nel Servizio Psichiatrico di Diagnosi e Cura e in Pronto Soccorso. Ho inoltre ricoperto incarichi di Direzione Sanitaria in servizi dedicati alla salute mentale e alle dipendenze.</p>
     <p>Affianco all’attività clinica l’interesse per la ricerca neuroscientifica e per lo studio dei meccanismi biologici coinvolti nei disturbi mentali. Sono coautore del volume <em>A Working Model of Affectivity</em>, dedicato ai circuiti neurali dell’affettività, al temperamento e ai disturbi affettivi, e di pubblicazioni scientifiche internazionali in ambito psichiatrico e neuroscientifico.</p>
-    <button class="pill primary rise nav-arrow" id="currentBtn">Cosa faccio attualmente</button>
+    <div class="story-nav"><button class="story-back" id="backHome" aria-label="Indietro">←</button><button class="pill primary rise nav-arrow" id="currentBtn">Cosa faccio attualmente</button></div>
   </div>
   <div id="bioCurrent" class="bio-state">
     <h2>Attualmente</h2>
     <p>Sono Dirigente Medico presso l’ASL di Alessandria e lavoro presso il reparto di Psichiatria dell’Ospedale San Giacomo di Novi Ligure.</p>
     <p>Parallelamente all’attività ospedaliera ricevo privatamente a Genova e Novi Ligure e svolgo consulenze psichiatriche anche online.</p>
     <p>Nel mio lavoro pongo al centro l’ascolto e la personalizzazione del percorso di cura, integrando il rigore clinico e scientifico con l’attenzione alla dimensione simbolica e alla psicologia analitica di orientamento junghiano.</p>
-    <button class="pill primary rise nav-arrow" id="approachBtn">Il mio approccio</button>
+    <div class="story-nav"><button class="story-back" id="backPast" aria-label="Indietro">←</button><button class="pill primary rise nav-arrow" id="approachBtn">Il mio approccio</button></div>
   </div>
 </div>
 <div id="approach" class="panelcopy right">
@@ -867,7 +936,7 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
     <h2>Il mio approccio</h2>
     <p>Nel mio lavoro clinico integro la valutazione psichiatrica e l’attenzione alle evidenze scientifiche con alcuni riferimenti alla psicologia analitica di Carl Gustav Jung. Questo orientamento aiuta a non considerare la persona soltanto attraverso i sintomi o la diagnosi, ma a comprenderne la storia, le relazioni, le risorse e le difficoltà nel loro insieme.</p>
     <p class="objective">L’obiettivo è costruire un percorso di cura che favorisca una maggiore consapevolezza di sé, strumenti più efficaci per affrontare i momenti di difficoltà e un miglior equilibrio nella vita quotidiana.</p>
-    <button class="pill primary rise bookAgain nav-arrow">Prenota una visita</button>
+    <div class="story-nav"><button class="story-back" id="backCurrent" aria-label="Indietro">←</button><button class="pill primary rise bookAgain nav-arrow">Prenota una visita</button></div>
   </div>
 </div>
 <button id="homeControl" aria-label="Apri menu" aria-expanded="false">
@@ -923,6 +992,10 @@ document.addEventListener('click',(e)=>{
   if(!quickMenu.contains(e.target) && e.target!==homeControl) closeQuickMenu();
 });
 
+function setStoryReading(on){
+  document.body.classList.toggle('story-reading',on);
+  if(on) requestAnimationFrame(()=>window.scrollTo({top:0,behavior:'smooth'}));
+}
 let playing=false;
 let video2Prepared=false;
 
@@ -940,25 +1013,25 @@ document.querySelector('.bookAgain').addEventListener('click',openBooking);
 document.getElementById('closeBooking').addEventListener('click',closeBooking);
 document.querySelectorAll('.placeholder').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));
 
-function playToEnd(video,onDone){
-  if(playing)return;
-  playing=true;
-  video.currentTime=0;
-  video.style.opacity='1';
-
-  const done=()=>{
-    video.removeEventListener('ended',done);
-    playing=false;
-    /* Keep the ended video visible: browser naturally freezes on its final frame. */
-    onDone();
-  };
-  video.addEventListener('ended',done,{once:true});
-
-  const p=video.play();
-  if(p) p.catch(()=>{
-    playing=false;
-    video.removeEventListener('ended',done);
-  });
+function waitForPlayable(video,timeout=2200){
+ return new Promise(resolve=>{
+  if(video.readyState>=3){resolve(true);return}
+  let done=false,timer;
+  const cleanup=()=>{video.removeEventListener('canplay',ready);video.removeEventListener('error',fail);clearTimeout(timer)};
+  const finish=ok=>{if(done)return;done=true;cleanup();resolve(ok)};
+  const ready=()=>finish(true),fail=()=>finish(false);
+  video.addEventListener('canplay',ready,{once:true});video.addEventListener('error',fail,{once:true});
+  timer=setTimeout(()=>finish(video.readyState>=2),timeout);video.preload='auto';video.load();
+ });
+}
+async function playToEnd(video,onDone){
+ if(playing)return;playing=true;video.currentTime=0;
+ const playable=await waitForPlayable(video);
+ if(!playable){video.style.opacity='1';playing=false;onDone();return}
+ video.style.opacity='1';let finished=false;
+ const finish=()=>{if(finished)return;finished=true;playing=false;video.removeEventListener('ended',finish);onDone()};
+ video.addEventListener('ended',finish,{once:true});
+ const p=video.play();if(p)p.catch(finish);
 }
 
 document.getElementById('who').addEventListener('click',()=>{
@@ -995,6 +1068,7 @@ document.getElementById('currentBtn').addEventListener('click',(e)=>{
   bioPast.classList.remove('active');
   setTimeout(()=>{
     bioCurrent.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
     const approachButton=document.getElementById('approachBtn');
     approachButton.style.pointerEvents='none';
     setTimeout(()=>{
@@ -1009,6 +1083,7 @@ document.getElementById('approachBtn').addEventListener('click',(e)=>{
   e.preventDefault();
   e.stopPropagation();
   if(!approachReady || playing)return;
+  setStoryReading(false);
   bio.classList.remove('show');
 
   setTimeout(()=>{
@@ -1020,6 +1095,7 @@ document.getElementById('approachBtn').addEventListener('click',(e)=>{
       if(approachStarted)return;
       approachStarted=true;
       approach.classList.add('show');
+      setStoryReading(true);
       setTimeout(()=>document.querySelector('#approach .rise')?.classList.add('show'),360);
     };
 
@@ -1038,6 +1114,33 @@ document.getElementById('approachBtn').addEventListener('click',(e)=>{
       revealApproach(); /* fallback if timeupdate did not fire near the end */
     });
   },330);
+});
+
+
+document.getElementById('backPast').addEventListener('click',()=>{
+  bioCurrent.classList.remove('active');
+  approachReady=false;
+  setTimeout(()=>{
+    bioPast.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  },220);
+});
+
+document.getElementById('backHome').addEventListener('click',()=>{
+  window.location.reload();
+});
+
+document.getElementById('backCurrent').addEventListener('click',()=>{
+  /* Return to the previous narrative state; keep this reliable on mobile.
+     The reverse-video flourish can be added later without changing navigation. */
+  approach.classList.remove('show');
+  setStoryReading(true);
+  video2.style.opacity='0';
+  video1.style.opacity='1';
+  bio.classList.add('show');
+  bioPast.classList.remove('active');
+  bioCurrent.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
 });
 
 /* Load video1 opportunistically after the initial hero has had time to render. */
