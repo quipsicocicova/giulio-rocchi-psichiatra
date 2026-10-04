@@ -10,12 +10,14 @@
   background:transparent!important;
 }
 
+#home{background:#f6f1e5 url("poster-home-mobile.webp") center/cover no-repeat!important}
+#idleMobile{display:block!important;opacity:1!important;visibility:visible!important;z-index:0!important;background:transparent!important}
 </style></head><body>
 
 </div>
 
 <section id="home" class="view on hero"><video muted playsinline autoplay loop preload="metadata" poster="poster-home-mobile.webp" src="idle-start-mobile-ios.mp4"></video><div class="copy"><h1>Giulio Rocchi</h1><div class="sub">Psichiatra | psicoterapeuta</div><div class="city">A Genova, Novi Ligure e online.</div><div class="actions"><button class="btn primary book">Prenota una visita</button><button class="btn" id="bioGo">Chi sono</button></div></div></section>
-<section id="bio" class="view reading" style="background-image:url('poster-bio-hq.webp')"><article id="past" class="card"><h2>Chi sono</h2><p>Sono Giulio Rocchi, medico chirurgo specialista in Psichiatria, laureato e specializzato presso l’Università degli Studi di Genova.</p><p>Nel corso del mio percorso professionale ho maturato esperienza nella psichiatria ospedaliera e territoriale, nel Servizio Psichiatrico di Diagnosi e Cura e in Pronto Soccorso. Ho inoltre ricoperto incarichi di Direzione Sanitaria in servizi dedicati alla salute mentale e alle dipendenze.</p><p>Affianco all’attività clinica l’interesse per la ricerca neuroscientifica e per lo studio dei meccanismi biologici coinvolti nei disturbi mentali. Sono coautore del volume <em>A Working Model of Affectivity</em>, dedicato ai circuiti neurali dell’affettività, al temperamento e ai disturbi affettivi, e di pubblicazioni scientifiche internazionali in ambito psichiatrico e neuroscientifico.</p><div class="actions"><button class="back" id="homeBack">←</button><button class="btn primary" id="currentGo">Cosa faccio attualmente →</button></div></article><article id="current" class="card"><h2>Attualmente</h2><p>Sono Dirigente Medico presso l’ASL di Alessandria e lavoro presso il reparto di Psichiatria dell’Ospedale San Giacomo di Novi Ligure.</p><p>Parallelamente all’attività ospedaliera ricevo privatamente a Genova e Novi Ligure e svolgo consulenze psichiatriche anche online.</p><p>Nel mio lavoro pongo al centro l’ascolto e la personalizzazione del percorso di cura, integrando il rigore clinico e scientifico con l’attenzione alla dimensione simbolica e alla psicologia analitica di orientamento junghiano.</p><div class="actions"><button class="back" id="pastBack">←</button><button class="btn primary" id="approachGo">Il mio approccio →</button></div></article></section>
+<section id="bio" class="view reading" style="background-image:url('poster-bio-hq.webp')"><article id="past" class="card"><h2>Chi sono</h2><p>Sono Giulio Rocchi, medico chirurgo specialista in Psichiatria, laureato e specializzato presso l’Università degli Studi di Genova.</p><p>Nel corso del mio percorso professionale ho maturato esperienza nel Servizio Psichiatrico di Diagnosi e Cura e in Pronto Soccorso; ho inoltre ricoperto incarichi di Direzione Sanitaria in servizi dedicati alla salute mentale e alle dipendenze.</p><p>Affianco all’attività clinica l’interesse per la ricerca neuroscientifica, in particolare ai circuiti neurali del temperamento e dell’affettività e ai disturbi correlati a quelle aree.</p><div class="actions"><button class="back" id="homeBack">←</button><button class="btn primary" id="currentGo">Cosa faccio attualmente →</button></div></article><article id="current" class="card"><h2>Attualmente</h2><p>Sono Dirigente Medico presso l’ASL di Alessandria e lavoro presso il reparto di Psichiatria dell’Ospedale San Giacomo di Novi Ligure; parallelamente all’attività ospedaliera ricevo privatamente a Genova e Novi Ligure e svolgo consulenze psichiatriche anche online.</p><p>Nel mio lavoro integro il rigore clinico e scientifico con l’attenzione alla dimensione simbolica e alla psicologia analitica di orientamento junghiano.</p><div class="actions"><button class="back" id="pastBack">←</button><button class="btn primary" id="approachGo">Il mio approccio →</button></div></article></section>
 <section id="approach" class="view reading" style="background-image:url('poster-approach-hq.webp')"><article class="card"><h2>Il mio approccio</h2><p>Nel mio lavoro clinico integro la valutazione psichiatrica e l’attenzione alle evidenze scientifiche con alcuni riferimenti alla psicologia analitica di Carl Gustav Jung. Questo orientamento aiuta a non considerare la persona soltanto attraverso i sintomi o la diagnosi, ma a comprenderne la storia, le relazioni, le risorse e le difficoltà nel loro insieme.</p><p>L’obiettivo è costruire un percorso di cura che favorisca una maggiore consapevolezza di sé, strumenti più efficaci per affrontare i momenti di difficoltà e un miglior equilibrio nella vita quotidiana.</p><div class="actions"><button class="back" id="currentBack">←</button><button class="btn primary book">Prenota una visita →</button></div><img class="portrait" src="foto-giulio.png" alt="Giulio Rocchi"></article></section>
 <div id="trans"><video id="tv" muted playsinline></video></div><button id="tree"><img src="logogramma-rocchi.png" alt=""></button><div id="menu"><button id="mh">Home</button><button id="mb">Prenota</button></div>
 <aside id="booking"><div class="bi"><div class="top"><button class="homeb" id="bh"><img src="logogramma-rocchi.png" alt=""></button><img src="logo-rocchi.png" alt="Giulio Rocchi"><button class="x" id="bx">×</button></div><h2>Prenota una visita</h2><p class="intro">Scegli la sede e la tipologia di visita.</p>
@@ -87,4 +89,19 @@ document.addEventListener('click',startIdle,{once:true});
 
 
 
+
+const idleMobile=document.getElementById('idleMobile');
+function ensureIdlePlaying(){
+  if(!idleMobile)return;
+  idleMobile.muted=true;
+  idleMobile.defaultMuted=true;
+  idleMobile.playsInline=true;
+  if(idleMobile.readyState===0) idleMobile.load();
+  const p=idleMobile.play();
+  if(p && typeof p.catch==='function') p.catch(()=>{});
+}
+ensureIdlePlaying();
+window.addEventListener('pageshow',ensureIdlePlaying);
+document.addEventListener('pointerdown',ensureIdlePlaying,{once:true,passive:true});
+document.addEventListener('touchstart',ensureIdlePlaying,{once:true,passive:true});
 </script></body></html>
