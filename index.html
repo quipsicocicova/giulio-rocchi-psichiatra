@@ -1395,6 +1395,159 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
   }
 }
 
+
+/* === MOBILE BIO DEFINITIVE FIX — HOME UNTOUCHED === */
+@media(max-width:760px){
+  /* #bio is only a transparent section wrapper, NOT the visible box. */
+  #bio{
+    position:relative!important;
+    width:100%!important;
+    min-height:100svh!important;
+    height:auto!important;
+    padding:max(120px,calc(env(safe-area-inset-top) + 105px)) 0 10vh!important;
+    margin:0!important;
+    background:transparent!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    overflow:visible!important;
+    pointer-events:auto!important;
+  }
+
+  /* The actual card. Force separation from the top/menu and restore its visual edge. */
+  #bioPast,#bioCurrent{
+    position:relative!important;
+    inset:auto!important;
+    left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+    display:none!important;
+    width:90%!important;
+    height:auto!important;max-height:none!important;
+    margin:0 auto!important;
+    padding:26px 24px 28px!important;
+    overflow:visible!important;
+    transform:none!important;
+    background:rgba(246,241,229,.94)!important;
+    border:1px solid rgba(13,57,51,.10)!important;
+    border-radius:14px!important;
+    box-shadow:0 12px 36px rgba(13,57,51,.10)!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+    z-index:10!important;
+  }
+  #bioPast.active,#bioCurrent.active{display:block!important}
+
+  #mobileBioBg{
+    position:absolute!important;
+    z-index:0!important;
+    inset:0!important;
+    width:100%!important;height:100%!important;
+    object-fit:cover!important;
+    pointer-events:none!important;
+  }
+
+  #bio .story-nav{
+    display:flex!important;
+    width:100%!important;
+    align-items:center!important;
+    gap:10px!important;
+    margin-top:22px!important;
+    position:relative!important;
+    z-index:20!important;
+    pointer-events:auto!important;
+  }
+  #currentBtn,#approachBtn,#backHome,#backPast{
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+    position:relative!important;
+    z-index:21!important;
+  }
+}
+
+
+/* MOBILE BIO V7 — only Bio spacing/tap target; Home remains untouched */
+@media(max-width:760px){
+  #bio{
+    padding:0 0 10vh!important;
+  }
+  #bioPast,#bioCurrent{
+    margin:max(105px,calc(env(safe-area-inset-top) + 90px)) auto 0!important;
+  }
+  #homeControl{
+    top:max(14px,env(safe-area-inset-top))!important;
+    right:14px!important;
+  }
+  #currentBtn{
+    cursor:pointer!important;
+    user-select:none!important;
+    -webkit-user-select:none!important;
+  }
+}
+
+
+/* Independent mobile Bio. Desktop/Home code is untouched. */
+#mobileBio{display:none}
+@media(max-width:760px){
+  #mobileBio.open{
+    display:block;position:fixed;z-index:45;inset:0;overflow-y:auto;
+    background:#f6f1e5;-webkit-overflow-scrolling:touch;
+  }
+  #mobileBio .mobileBioBg{
+    position:fixed;z-index:0;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;
+  }
+  #mobileBioMenu{
+    position:fixed;z-index:3;top:max(14px,env(safe-area-inset-top));right:14px;
+    width:52px;height:52px;padding:8px;border:1px solid rgba(13,57,51,.24);
+    border-radius:10px;background:rgba(246,241,229,.94);
+  }
+  #mobileBioMenu img{width:100%;height:100%;object-fit:contain}
+  .mobileBioCard{
+    display:none;position:relative;z-index:2;width:90%;margin:max(92px,calc(env(safe-area-inset-top) + 78px)) auto 8vh;
+    padding:26px 24px 28px;background:rgba(246,241,229,.94);color:#0d3933;
+    border:1px solid rgba(13,57,51,.10);border-radius:14px;box-shadow:0 12px 36px rgba(13,57,51,.10);
+  }
+  .mobileBioCard.active{display:block}
+  .mobileBioCard h2{font-size:34px;font-weight:400;margin:0 0 18px}
+  .mobileBioCard p{font-size:16px;line-height:1.55;margin:0 0 16px}
+  .mobileBioNav{display:flex;align-items:center;gap:10px;margin-top:22px}
+  .mobileBack{width:48px;height:48px;flex:0 0 48px;border:1px solid rgba(13,57,51,.28);border-radius:9px;background:#f6f1e5;color:#0d3933;font-size:25px}
+  .mobilePrimary{min-height:48px;flex:1;border:1px solid #0d3933;border-radius:9px;padding:13px 16px;background:#0d3933;color:#f6f1e5;font:400 16px Baskerville,Palatino,Georgia,serif}
+}
+
+
+/* Independent mobile Approach. Approved Home + mobile Bio remain untouched. */
+#mobileApproach{display:none}
+@media(max-width:760px){
+  #mobileApproach.open{
+    display:block;position:fixed;z-index:46;inset:0;overflow-y:auto;
+    background:#f6f1e5;-webkit-overflow-scrolling:touch;
+  }
+  #mobileApproach .mobileApproachBg{
+    position:fixed;z-index:0;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;
+  }
+  #mobileApproachMenu{
+    position:fixed;z-index:3;top:max(14px,env(safe-area-inset-top));right:14px;
+    width:52px;height:52px;padding:8px;border:1px solid rgba(13,57,51,.24);
+    border-radius:10px;background:rgba(246,241,229,.94);
+  }
+  #mobileApproachMenu img{width:100%;height:100%;object-fit:contain}
+  .mobileApproachCard{
+    position:relative;z-index:2;width:90%;
+    margin:max(92px,calc(env(safe-area-inset-top) + 78px)) auto 8vh;
+    padding:26px 24px 28px;background:rgba(246,241,229,.94);color:#0d3933;
+    border:1px solid rgba(13,57,51,.10);border-radius:14px;
+    box-shadow:0 12px 36px rgba(13,57,51,.10);
+  }
+  .mobileApproachCard h2{font-size:34px;font-weight:400;margin:0 0 18px}
+  .mobileApproachCard p{font-size:16px;line-height:1.55;margin:0 0 16px}
+  .mobileApproachNav{display:flex;align-items:center;gap:10px;margin-top:22px}
+  .mobileGiulio{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;object-position:center 25%;border-radius:12px;margin-top:28px}
+}
+
+
+/* Mobile booking must sit above the independent story overlays. */
+@media(max-width:760px){
+  #booking{z-index:120!important}
+}
+
 </style>
 </head>
 <body>
@@ -1432,6 +1585,34 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
   <button type="button" id="menuHome">Home</button>
   <button type="button" id="menuBook">Prenota</button>
 </nav>
+<section id="mobileBio" aria-hidden="true">
+  <img class="mobileBioBg" src="poster-bio-hq.webp" alt="">
+  <button type="button" id="mobileBioMenu" aria-label="Apri menu"><img src="logogramma-rocchi.png" alt=""></button>
+  <article id="mobileBioPast" class="mobileBioCard active">
+    <h2>Chi sono</h2>
+    <p>Sono Giulio Rocchi, medico chirurgo specialista in Psichiatria, laureato e specializzato presso l’Università degli Studi di Genova.</p>
+    <p>Nel corso del mio percorso professionale ho maturato esperienza nel Servizio Psichiatrico di Diagnosi e Cura e in Pronto Soccorso; ho inoltre ricoperto incarichi di Direzione Sanitaria in servizi dedicati alla salute mentale e alle dipendenze.</p>
+    <p>Affianco all’attività clinica l’interesse per la ricerca neuroscientifica, in particolare ai circuiti neurali del temperamento e dell’affettività e ai disturbi correlati a quelle aree.</p>
+    <div class="mobileBioNav"><button type="button" id="mobileBackHome" class="mobileBack">←</button><button type="button" id="mobileGoCurrent" class="mobilePrimary">Cosa faccio attualmente →</button></div>
+  </article>
+  <article id="mobileBioCurrent" class="mobileBioCard">
+    <h2>Attualmente</h2>
+    <p>Sono Dirigente Medico presso l’ASL di Alessandria e lavoro presso il reparto di Psichiatria dell’Ospedale San Giacomo di Novi Ligure; parallelamente all’attività ospedaliera ricevo privatamente a Genova e Novi Ligure e svolgo consulenze psichiatriche anche online.</p>
+    <p>Nel mio lavoro integro il rigore clinico e scientifico con l’attenzione alla dimensione simbolica e alla psicologia analitica di orientamento junghiano.</p>
+    <div class="mobileBioNav"><button type="button" id="mobileBackPast" class="mobileBack">←</button><button type="button" id="mobileGoApproach" class="mobilePrimary">Il mio approccio →</button></div>
+  </article>
+</section>
+<section id="mobileApproach" aria-hidden="true">
+  <img class="mobileApproachBg" src="poster-approach-hq.webp" alt="">
+  <button type="button" id="mobileApproachMenu" aria-label="Apri menu"><img src="logogramma-rocchi.png" alt=""></button>
+  <article class="mobileApproachCard">
+    <h2>Il mio approccio</h2>
+    <p>Nel mio lavoro clinico integro la valutazione psichiatrica e l’attenzione alle evidenze scientifiche con alcuni riferimenti alla psicologia analitica di Carl Gustav Jung. Questo orientamento aiuta a non considerare la persona soltanto attraverso i sintomi o la diagnosi, ma a comprenderne la storia, le relazioni, le risorse e le difficoltà nel loro insieme.</p>
+    <p>L’obiettivo è costruire un percorso di cura che favorisca una maggiore consapevolezza di sé, strumenti più efficaci per affrontare i momenti di difficoltà e un miglior equilibrio nella vita quotidiana.</p>
+    <div class="mobileApproachNav"><button type="button" id="mobileApproachBack" class="mobileBack">←</button><button type="button" id="mobileApproachBook" class="mobilePrimary">Prenota una visita →</button></div>
+    <img class="mobileGiulio" src="foto-giulio.png" alt="Giulio Rocchi">
+  </article>
+</section>
 <aside id="booking"><div class="bookingInner"><div class="bookingTop">
       <button id="bookingHome" class="booking-home" aria-label="Torna alla home">
         <img src="logogramma-rocchi.png" alt="">
@@ -1591,11 +1772,18 @@ document.getElementById('who').addEventListener('click',()=>{
       /* Static breakpoint = last frame of video1. No idle2 asset. */
       prepareVideo2();
       setTimeout(()=>{
-        setStoryReading(true);
-        bio.classList.add('show');
-        bioPast.classList.add('active');
-        bioCurrent.classList.remove('active');
-        setTimeout(()=>document.querySelector('#bioPast .rise')?.classList.add('show'),420);
+        if(window.matchMedia('(max-width:760px)').matches){
+          document.getElementById('mobileBio').classList.add('open');
+          document.getElementById('mobileBio').setAttribute('aria-hidden','false');
+          document.getElementById('mobileBioPast').classList.add('active');
+          document.getElementById('mobileBioCurrent').classList.remove('active');
+        }else{
+          setStoryReading(true);
+          bio.classList.add('show');
+          bioPast.classList.add('active');
+          bioCurrent.classList.remove('active');
+          setTimeout(()=>document.querySelector('#bioPast .rise')?.classList.add('show'),420);
+        }
       },220);
     });
   },180);
@@ -1637,10 +1825,16 @@ document.getElementById('approachBtn').addEventListener('click',(e)=>{
     const revealApproach=()=>{
       if(approachStarted)return;
       approachStarted=true;
-      if(posterApproach){posterApproach.classList.add('endpoint-visible');posterApproach.style.opacity='1';}
-      approach.classList.add('show');
-      setStoryReading(true);
-      setTimeout(()=>document.querySelector('#approach .rise')?.classList.add('show'),260);
+      if(window.matchMedia('(max-width:760px)').matches){
+        const ma=document.getElementById('mobileApproach');
+        ma.classList.add('open');
+        ma.setAttribute('aria-hidden','false');
+      }else{
+        if(posterApproach){posterApproach.classList.add('endpoint-visible');posterApproach.style.opacity='1';}
+        approach.classList.add('show');
+        setStoryReading(true);
+        setTimeout(()=>document.querySelector('#approach .rise')?.classList.add('show'),260);
+      }
     };
 
     const watchEnd=()=>{
@@ -1735,6 +1929,103 @@ window.addEventListener('load',()=>{
   setTimeout(close,3200);
   paint();
 })();
+
+/* Mobile Bio navigation: capture-phase, independent of legacy panel listeners. */
+if(window.matchMedia('(max-width:760px)').matches){
+  document.addEventListener('click',(e)=>{
+    const current=e.target.closest('#currentBtn');
+    if(current){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      bioPast.classList.remove('active');
+      bioCurrent.classList.add('active');
+      approachReady=true;
+      document.getElementById('approachBtn')?.classList.add('show');
+      window.scrollTo({top:bio.offsetTop,behavior:'smooth'});
+      return;
+    }
+    const past=e.target.closest('#backPast');
+    if(past){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      bioCurrent.classList.remove('active');
+      bioPast.classList.add('active');
+      approachReady=false;
+      window.scrollTo({top:bio.offsetTop,behavior:'smooth'});
+    }
+  },true);
+}
+
+if(window.matchMedia('(max-width:760px)').matches){
+  const mobileCurrentBtn=document.getElementById('currentBtn');
+  const goCurrentMobile=(e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    bioPast.classList.remove('active');
+    bioCurrent.classList.add('active');
+    approachReady=true;
+    const ab=document.getElementById('approachBtn');
+    if(ab){ab.classList.add('show');ab.style.pointerEvents='auto';}
+    requestAnimationFrame(()=>{
+      const top=bio.getBoundingClientRect().top+window.scrollY;
+      window.scrollTo({top,behavior:'smooth'});
+    });
+  };
+  mobileCurrentBtn.addEventListener('pointerup',goCurrentMobile);
+}
+
+/* Independent mobile Bio controls: no legacy desktop event/CSS dependency. */
+if(window.matchMedia('(max-width:760px)').matches){
+  const mBio=document.getElementById('mobileBio');
+  const mPast=document.getElementById('mobileBioPast');
+  const mCurrent=document.getElementById('mobileBioCurrent');
+  document.getElementById('mobileGoCurrent').addEventListener('click',()=>{
+    mPast.classList.remove('active');mCurrent.classList.add('active');mBio.scrollTo({top:0,behavior:'smooth'});
+  });
+  document.getElementById('mobileBackPast').addEventListener('click',()=>{
+    mCurrent.classList.remove('active');mPast.classList.add('active');mBio.scrollTo({top:0,behavior:'smooth'});
+  });
+  document.getElementById('mobileBackHome').addEventListener('click',()=>window.location.reload());
+  document.getElementById('mobileBioMenu').addEventListener('click',()=>quickMenu.classList.toggle('open'));
+  document.getElementById('mobileGoApproach').addEventListener('click',()=>{
+    mBio.classList.remove('open');mBio.setAttribute('aria-hidden','true');
+    approachReady=true;
+    let revealed=false;
+    const revealMobileApproach=()=>{
+      if(revealed)return;revealed=true;
+      video2.removeEventListener('timeupdate',watchMobileEnd);
+      video2.style.opacity='0';
+      const ma=document.getElementById('mobileApproach');
+      ma.classList.add('open');ma.setAttribute('aria-hidden','false');
+    };
+    const watchMobileEnd=()=>{
+      if(video2.currentTime>0 && video2.duration &&
+         video2.currentTime>=Math.max(0,video2.duration-.25)) revealMobileApproach();
+    };
+    video2.addEventListener('timeupdate',watchMobileEnd);
+    playToEnd(video2,revealMobileApproach);
+  });
+}
+
+if(window.matchMedia('(max-width:760px)').matches){
+  const ma=document.getElementById('mobileApproach');
+  document.getElementById('mobileApproachBack').addEventListener('click',()=>{
+    ma.classList.remove('open');ma.setAttribute('aria-hidden','true');
+    const mb=document.getElementById('mobileBio');
+    mb.classList.add('open');mb.setAttribute('aria-hidden','false');
+    document.getElementById('mobileBioPast').classList.remove('active');
+    document.getElementById('mobileBioCurrent').classList.add('active');
+  });
+  document.getElementById('mobileApproachBook').addEventListener('click',(e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    /* Booking must sit above the independent mobile Approach overlay. */
+    ma.classList.remove('open');
+    ma.setAttribute('aria-hidden','true');
+    openBooking();
+  });
+  document.getElementById('mobileApproachMenu').addEventListener('click',()=>quickMenu.classList.toggle('open'));
+}
 </script>
 </body>
 </html>
