@@ -1257,6 +1257,37 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
   .streetview iframe{min-height:250px!important}
 }
 
+
+/* MOBILE IMAGE FIX:
+   endpoint poster layers belong to the first viewport in the desktop architecture.
+   On mobile, Bio and Approach are normal-flow sections further down the document,
+   so give those sections their own backgrounds directly. */
+@media(max-width:760px){
+  #bio{
+    background:
+      linear-gradient(rgba(246,241,229,.18),rgba(246,241,229,.18)),
+      url("poster-bio-hq.webp") center/cover no-repeat!important;
+  }
+  #approach{
+    background:
+      linear-gradient(rgba(246,241,229,.18),rgba(246,241,229,.18)),
+      url("poster-approach-hq.webp") center/cover no-repeat!important;
+  }
+
+  /* Desktop endpoint layers are unnecessary once mobile enters normal document flow. */
+  #posterBio,#posterApproach{
+    display:none!important;
+  }
+
+  /* Keep actual content images explicit and visible. */
+  #approach .approach-photo,
+  #booking .online-photo img{
+    display:block!important;
+    opacity:1!important;
+    visibility:visible!important;
+  }
+}
+
 </style>
 </head>
 <body>
