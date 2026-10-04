@@ -746,6 +746,93 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
   #home .pill{position:relative;z-index:31;pointer-events:auto!important}
 }
 
+
+/* === MOBILE QUICK MENU + SCROLLABLE STORY PANELS === */
+
+/* The tree logogram becomes the persistent menu trigger after leaving home. */
+#homeControl{
+  width:52px!important;height:52px!important;
+  padding:8px!important;
+  justify-content:center!important;
+  border-radius:10px!important;
+}
+#homeControl img{
+  width:36px!important;height:30px!important;
+}
+#quickMenu{
+  position:absolute;z-index:35;
+  top:84px;right:28px;
+  min-width:150px;
+  padding:7px;
+  display:flex;flex-direction:column;gap:4px;
+  background:rgba(246,241,229,.96);
+  border:1px solid rgba(13,57,51,.22);
+  border-radius:11px;
+  box-shadow:0 14px 38px rgba(13,57,51,.12);
+  opacity:0;transform:translateY(-8px) scale(.98);
+  transform-origin:top right;
+  pointer-events:none;
+  transition:opacity .25s ease,transform .25s ease;
+}
+#quickMenu.open{
+  opacity:1;transform:none;pointer-events:auto;
+}
+#quickMenu button{
+  appearance:none;border:0;background:transparent;color:#0d3933;
+  padding:11px 13px;border-radius:7px;text-align:left;cursor:pointer;
+  font:400 16px/1 "Baskerville","Palatino Linotype",Palatino,Georgia,serif;
+  font-variant:small-caps;text-transform:lowercase;letter-spacing:.10em;
+}
+#quickMenu button:hover{background:rgba(13,57,51,.07)}
+
+/* Mobile: text panels must actually scroll, while the page itself stays immersive. */
+@media(max-width:760px){
+  #homeControl{
+    top:max(12px,env(safe-area-inset-top))!important;
+    right:12px!important;
+  }
+  #quickMenu{
+    top:max(72px,calc(env(safe-area-inset-top) + 72px));
+    right:12px;
+  }
+
+  #bioPast,#bioCurrent{
+    max-height:76dvh!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+    touch-action:pan-y!important;
+    padding-bottom:30px!important;
+  }
+
+  /* Approach on phone: text FIRST, photo SECOND, all inside one scrollable panel. */
+  #approach{
+    display:flex!important;
+    flex-direction:column!important;
+    max-height:82dvh!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+    touch-action:pan-y!important;
+  }
+  #approach .approach-text{order:1!important}
+  #approach .approach-photo{
+    order:2!important;
+    height:auto!important;
+    max-height:none!important;
+    aspect-ratio:4/5;
+    object-fit:cover!important;
+    margin:26px 0 4px!important;
+  }
+
+  /* Keep buttons tappable while panels themselves pan vertically. */
+  #bioPast button,#bioCurrent button,#approach button{
+    touch-action:manipulation!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -781,10 +868,13 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
     <button class="pill primary rise bookAgain nav-arrow">Prenota una visita</button>
   </div>
 </div>
-<button id="homeControl" aria-label="Torna alla home">
+<button id="homeControl" aria-label="Apri menu" aria-expanded="false">
   <img src="logogramma-rocchi.png" alt="">
-  <span>Torna alla home</span>
 </button>
+<nav id="quickMenu" aria-hidden="true">
+  <button type="button" id="menuHome">Home</button>
+  <button type="button" id="menuBook">Prenota</button>
+</nav>
 <aside id="booking"><div class="bookingInner"><div class="bookingTop">
       <button id="bookingHome" class="booking-home" aria-label="Torna alla home">
         <img src="logogramma-rocchi.png" alt="">
@@ -806,7 +896,30 @@ const booking=document.getElementById('booking');
 const bookingHome=document.getElementById('bookingHome');
 bookingHome.addEventListener('click',()=>{ window.location.reload(); });
 const homeControl=document.getElementById('homeControl');
-homeControl.addEventListener('click',()=>{ window.location.reload(); });
+const quickMenu=document.getElementById('quickMenu');
+const menuHome=document.getElementById('menuHome');
+const menuBook=document.getElementById('menuBook');
+
+function closeQuickMenu(){
+  quickMenu.classList.remove('open');
+  quickMenu.setAttribute('aria-hidden','true');
+  homeControl.setAttribute('aria-expanded','false');
+}
+homeControl.addEventListener('click',(e)=>{
+  e.stopPropagation();
+  const open=!quickMenu.classList.contains('open');
+  quickMenu.classList.toggle('open',open);
+  quickMenu.setAttribute('aria-hidden',String(!open));
+  homeControl.setAttribute('aria-expanded',String(open));
+});
+menuHome.addEventListener('click',()=>{ window.location.reload(); });
+menuBook.addEventListener('click',()=>{
+  closeQuickMenu();
+  openBooking();
+});
+document.addEventListener('click',(e)=>{
+  if(!quickMenu.contains(e.target) && e.target!==homeControl) closeQuickMenu();
+});
 
 let playing=false;
 let video2Prepared=false;
