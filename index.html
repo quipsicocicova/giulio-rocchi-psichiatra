@@ -1,10 +1,46 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Giulio Rocchi</title><style>html,body{margin:0;background:#f6f1e5}</style></head><body>
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Giulio Rocchi</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#f6f1e5}
+#boot{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#f6f1e5;color:#0d3933;font-family:Baskerville,Palatino,Georgia,serif}
+.inner{width:min(210px,56vw);text-align:center}
+.mark{width:68px;height:68px;object-fit:contain;margin:0 auto 16px;display:block;animation:pulse 1.6s ease-in-out infinite}
+.label{font-size:12px;line-height:1.2;font-variant:small-caps;text-transform:lowercase;letter-spacing:.18em;margin-bottom:10px}
+.track{height:2px;background:rgba(13,57,51,.16);overflow:hidden}.bar{display:block;width:100%;height:100%;background:#0d3933;transform:scaleX(0);transform-origin:left;transition:transform .18s linear}
+.percent{margin-top:8px;font:12px/1.2 Arial,sans-serif;letter-spacing:.08em}
+@keyframes pulse{0%,100%{opacity:.45;transform:scale(.96)}50%{opacity:1;transform:scale(1.03)}}
+@media(prefers-reduced-motion:reduce){.mark{animation:none}}
+</style>
+</head>
+<body>
+<div id="boot">
+ <div class="inner">
+  <img class="mark" src="logogramma-rocchi.png" alt="">
+  <div class="label">Loading</div>
+  <div class="track"><i class="bar" id="bar"></i></div>
+  <div class="percent" id="pct">0%</div>
+ </div>
+</div>
 <script>
-(function(){
-  var target = window.innerWidth <= 767 ? "mobile.html" : "desktop.html";
-  window.location.replace(target + window.location.search + window.location.hash);
+(()=>{
+ const mobile=innerWidth<=767;
+ const target=mobile?'mobile.html':'desktop.html';
+ const assets=mobile
+   ? [target,'poster-home-mobile.webp']
+   : [target,'poster-home-hq.webp'];
+ const bar=document.getElementById('bar'),pct=document.getElementById('pct');
+ let p=0,done=false;
+ const paint=()=>{bar.style.transform=`scaleX(${p/100})`;pct.textContent=`${Math.round(p)}%`};
+ const tick=setInterval(()=>{if(p<88){p+=p<45?4:p<70?2:1;paint()}},80);
+ const finish=()=>{if(done)return;done=true;clearInterval(tick);p=100;paint();setTimeout(()=>location.replace(target),220)};
+ Promise.allSettled(assets.map(url=>fetch(url,{cache:'force-cache'}))).then(finish);
+ setTimeout(finish,4500);
+ paint();
 })();
 </script>
-<noscript><a href="desktop.html">Apri il sito</a></noscript>
-</body></html>
+</body>
+</html>

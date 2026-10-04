@@ -2,53 +2,16 @@
 <style>
 :root{--i:#f6f1e5;--g:#0d3933;--l:#0d393344}*{box-sizing:border-box}html{scroll-behavior:smooth}html,body{margin:0;min-height:100%;overflow-x:hidden;background:var(--i);color:var(--g);font-family:Baskerville,Palatino,Georgia,serif}button,a{font:inherit}.view{display:none}.view.on{display:block}.hero{position:relative;height:100svh;overflow:hidden}.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,#f6f1e5fa,#f6f1e5c7 18%,#f6f1e545 40%,transparent 60%);pointer-events:none}.copy{position:absolute;z-index:2;left:5%;right:5%;bottom:5vh;text-align:center}.copy h1{font-size:12vw;font-weight:400;margin:0}.sub{font-variant:small-caps;text-transform:lowercase;letter-spacing:.14em;font-size:17px}.city{margin-top:7px;font-size:17px}.actions{display:flex;gap:9px;align-items:center;margin-top:22px}.copy .actions{justify-content:center;flex-wrap:wrap}.btn{border:1px solid var(--g);border-radius:9px;padding:14px 18px;background:#f6f1e5ee;color:var(--g);font-variant:small-caps;text-transform:lowercase;letter-spacing:.08em;font-size:16px;text-decoration:none}.primary{background:var(--g);color:var(--i)}.back{width:48px;height:48px;flex:0 0 48px;border:1px solid var(--l);border-radius:9px;background:var(--i);color:var(--g);font-size:25px}.reading{position:relative;min-height:100svh;padding:13vh 0 9vh;background-size:cover;background-position:center}.reading:before{content:"";position:absolute;inset:0;background:#f6f1e538;pointer-events:none}.card{position:relative;width:90%;margin:auto;padding:26px 24px;background:#f6f1e5ed;border-radius:14px}.card h2{font-size:36px;font-weight:400;margin:0 0 18px}.card p{font-size:17px;line-height:1.58;margin:0 0 17px}.card .btn{flex:1;text-align:center}#current{display:none}#current.on{display:block}#past.off{display:none}.portrait{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:12px;margin-top:28px}#trans{display:none;position:fixed;z-index:90;inset:0;background:var(--i) url("poster-home-mobile.webp") center/cover no-repeat}#trans.on{display:block}#trans video{width:100%;height:100%;object-fit:cover}#tree{display:none;position:fixed;z-index:100;top:12px;right:12px;width:50px;height:50px;padding:8px;border:1px solid var(--l);border-radius:10px;background:#f6f1e5f5}#tree.on{display:block}#tree img{width:100%;height:100%;object-fit:contain}#menu{display:none;position:fixed;z-index:101;top:70px;right:12px;padding:7px;background:#f6f1e5fa;border:1px solid var(--l);border-radius:11px}#menu.on{display:flex;flex-direction:column}#menu button{border:0;background:none;color:var(--g);padding:11px 15px;text-align:left}#booking{position:fixed;z-index:110;inset:0;overflow-y:auto;background:var(--i);transform:translateX(100%);transition:.7s}#booking.on{transform:none}.bi{width:90%;margin:auto;padding:24px 0 70px}.top{position:relative;min-height:110px;display:flex;justify-content:center}.top>img{width:50vw;max-height:90px;object-fit:contain}.homeb,.x{position:absolute;top:0;width:46px;height:46px;border:1px solid var(--l);background:var(--i);color:var(--g)}.homeb{left:0;border-radius:9px;padding:8px}.homeb img{width:100%;height:100%;object-fit:contain}.x{right:0;border-radius:50%;font-size:26px}.bi>h2{text-align:center;font-size:40px;font-weight:400;margin:8px}.intro{text-align:center;margin-bottom:32px}.loc{padding:28px 0;border-top:1px solid var(--l)}.loc h3{font-size:28px;font-weight:400;margin:0}.locBtns{display:grid;gap:9px;margin-top:18px}.map{margin-top:18px;height:250px;border-radius:14px;overflow:hidden}.map iframe,.map img{width:100%;height:100%;border:0;object-fit:cover}
 
-/* Initial lightweight preloader */
-#preloader{
-  position:fixed;z-index:9999;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  background:#f6f1e5;
-  opacity:1;visibility:visible;
-  transition:opacity .55s ease,visibility 0s linear .55s;
+/* iOS-safe Home: poster is a real CSS fallback behind the idle video. */
+#home{
+  background:#f6f1e5 url("poster-home-mobile.webp") center/cover no-repeat!important;
 }
-#preloader.done{opacity:0;visibility:hidden;pointer-events:none}
-#preloader img{
-  width:68px;height:68px;object-fit:contain;
-  animation:preloadPulse 1.65s ease-in-out infinite;
+#idleMobile{
+  background:transparent!important;
 }
-@keyframes preloadPulse{
-  0%,100%{opacity:.48;transform:scale(.96)}
-  50%{opacity:1;transform:scale(1.03)}
-}
-@media(prefers-reduced-motion:reduce){
-  #preloader img{animation:none}
-}
-
-
-/* Authoritative non-blocking preloader */
-#preloader{
-  position:fixed!important;z-index:99999!important;inset:0!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;
-  background:#f6f1e5!important;opacity:1;visibility:visible;
-  transition:opacity .5s ease,visibility 0s linear .5s;
-}
-#preloader.done{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
-.loader-inner{width:min(210px,56vw);text-align:center;color:#0d3933}
-.loader-inner img{display:block;width:68px;height:68px;object-fit:contain;margin:0 auto 16px;animation:loaderPulse 1.6s ease-in-out infinite}
-.loader-label{font:400 12px/1.2 Baskerville,Palatino,Georgia,serif;font-variant:small-caps;text-transform:lowercase;letter-spacing:.18em;margin-bottom:10px}
-.loader-track{height:2px;width:100%;background:rgba(13,57,51,.16);overflow:hidden}
-.loader-track i{display:block;width:100%;height:100%;background:#0d3933;transform:scaleX(0);transform-origin:left;transition:transform .18s linear}
-#loaderPercent{margin-top:8px;font:12px/1.2 Arial,sans-serif;letter-spacing:.08em}
-@keyframes loaderPulse{0%,100%{opacity:.45;transform:scale(.96)}50%{opacity:1;transform:scale(1.03)}}
-@media(prefers-reduced-motion:reduce){.loader-inner img{animation:none}}
 
 </style></head><body>
-<div id="preloader" aria-label="Caricamento">
-  <div class="loader-inner">
-    <img src="logogramma-rocchi.png" alt="">
-    <div class="loader-label">Loading</div>
-    <div class="loader-track"><i id="loaderBar"></i></div>
-    <div id="loaderPercent">0%</div>
-  </div>
+
 </div>
 
 <section id="home" class="view on hero"><video muted playsinline autoplay loop preload="metadata" poster="poster-home-mobile.webp" src="idle-start-mobile-ios.mp4"></video><div class="copy"><h1>Giulio Rocchi</h1><div class="sub">Psichiatra | psicoterapeuta</div><div class="city">A Genova, Novi Ligure e online.</div><div class="actions"><button class="btn primary book">Prenota una visita</button><button class="btn" id="bioGo">Chi sono</button></div></div></section>
@@ -63,6 +26,7 @@
 <script>
 const idleMobile=document.getElementById('idleMobile');
 const H=document.getElementById('home'),B=document.getElementById('bio'),A=document.getElementById('approach'),P=document.getElementById('past'),C=document.getElementById('current'),T=document.getElementById('trans'),V=document.getElementById('tv'),tree=document.getElementById('tree'),menu=document.getElementById('menu'),booking=document.getElementById('booking');
+const bioGo=document.getElementById('bioGo'),currentGo=document.getElementById('currentGo'),pastBack=document.getElementById('pastBack'),approachGo=document.getElementById('approachGo'),currentBack=document.getElementById('currentBack'),homeBack=document.getElementById('homeBack'),bx=document.getElementById('bx'),bh=document.getElementById('bh'),mh=document.getElementById('mh'),mb=document.getElementById('mb');
 function resetBio(){
   C.classList.remove('on');
   P.classList.remove('off');
@@ -80,35 +44,32 @@ function play(src,done){
   V.currentTime=0;
   V.preload='auto';
   V.load();
-
-  let finished=false;
+  let finished=false,watchdog;
   const cleanup=()=>{
+    clearTimeout(watchdog);
     V.removeEventListener('canplay',start);
-    V.removeEventListener('ended',end);
-    V.removeEventListener('error',fail);
+    V.removeEventListener('ended',finish);
+    V.removeEventListener('error',finish);
   };
   const finish=()=>{
     if(finished)return;
-    finished=true;
-    cleanup();
+    finished=true; cleanup();
     T.classList.remove('on');
     done();
   };
-  const end=()=>finish();
-  const fail=()=>finish();
   const start=()=>{
     if(finished)return;
     T.classList.add('on');
-    V.play().catch(fail);
+    const p=V.play();
+    if(p)p.catch(finish);
   };
-
   V.addEventListener('canplay',start,{once:true});
-  V.addEventListener('ended',end,{once:true});
-  V.addEventListener('error',fail,{once:true});
-
-  /* If iOS already has enough buffered data, canplay may have fired synchronously. */
+  V.addEventListener('ended',finish,{once:true});
+  V.addEventListener('error',finish,{once:true});
+  watchdog=setTimeout(finish,3500);
   if(V.readyState>=3) start();
 }
+
 function book(){booking.classList.add('on')}function close(){booking.classList.remove('on')}
 bioGo.onclick=()=>{resetBio();play('video1-web.mp4',()=>show(B))};currentGo.onclick=()=>{P.classList.add('off');C.classList.add('on');scrollTo(0,0)};pastBack.onclick=()=>{C.classList.remove('on');P.classList.remove('off');scrollTo(0,0)};approachGo.onclick=()=>play('video2-web.mp4',()=>show(A));currentBack.onclick=()=>{show(B);P.classList.add('off');C.classList.add('on')};homeBack.onclick=()=>show(H);
 document.querySelectorAll('.book').forEach(x=>x.onclick=book);bx.onclick=close;bh.onclick=()=>{close();show(H)};tree.onclick=()=>menu.classList.toggle('on');mh.onclick=()=>{menu.classList.remove('on');show(H)};mb.onclick=()=>{menu.classList.remove('on');book()};document.querySelectorAll('.ph').forEach(x=>x.onclick=e=>e.preventDefault());
@@ -123,53 +84,7 @@ window.addEventListener('load',startIdle,{once:true});
 document.addEventListener('touchstart',startIdle,{once:true,passive:true});
 document.addEventListener('click',startIdle,{once:true});
 
-const legacyPreloader=document.getElementById('preloader');
-const preloadStarted=performance.now();
-function dismissPreloader(){
-  const minimum=900;
-  const elapsed=performance.now()-preloadStarted;
-  setTimeout(()=>legacyPreloader.classList.add('done'),Math.max(0,minimum-elapsed));
-}
-/* Prefer the initial poster + idle metadata, but never block the page for long. */
-const initialPoster=new Image();
-initialPoster.src='poster-home-mobile.webp';
-Promise.race([
-  Promise.all([
-    initialPoster.decode ? initialPoster.decode().catch(()=>{}) : Promise.resolve(),
-    new Promise(resolve=>{
-      if(idleMobile.readyState>=1) resolve();
-      else idleMobile.addEventListener('loadedmetadata',resolve,{once:true});
-    })
-  ]),
-  new Promise(resolve=>setTimeout(resolve,2200))
-]).then(()=>{
-  startIdle();
-  dismissPreloader();
-});
 
-/* Reliable visual loader: simulated progress, never blocks indefinitely. */
-(()=>{
-  const loader=document.getElementById('preloader');
-  const bar=document.getElementById('loaderBar');
-  const pct=document.getElementById('loaderPercent');
-  if(!loader||!bar||!pct)return;
-  let progress=0,closed=false;
-  const started=performance.now();
-  const paint=()=>{bar.style.transform=`scaleX(${progress/100})`;pct.textContent=`${Math.round(progress)}%`;};
-  const timer=setInterval(()=>{
-    if(closed)return;
-    if(progress<90) progress+=progress<55?4:progress<78?2:1;
-    paint();
-  },90);
-  const close=()=>{
-    if(closed)return; closed=true; clearInterval(timer);
-    progress=100; paint();
-    const wait=Math.max(0,700-(performance.now()-started));
-    setTimeout(()=>loader.classList.add('done'),wait+180);
-  };
-  window.addEventListener('load',()=>setTimeout(close,120),{once:true});
-  /* Hard escape hatch: loader can never trap the site. */
-  setTimeout(close,2600);
-  paint();
-})();
+
+
 </script></body></html>
