@@ -1288,6 +1288,86 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
   }
 }
 
+
+/* MOBILE BIO POSTER — dedicated visual layer, independent of desktop poster state */
+@media(max-width:760px){
+  #bio{
+    position:relative!important;
+    isolation:isolate!important;
+    background:#f6f1e5!important;
+  }
+  #bio::before{
+    content:""!important;
+    position:absolute!important;
+    z-index:-2!important;
+    inset:0!important;
+    display:block!important;
+    background:url("poster-bio-hq.webp") center center/cover no-repeat!important;
+    opacity:1!important;
+    pointer-events:none!important;
+  }
+  #bio::after{
+    content:""!important;
+    position:absolute!important;
+    z-index:-1!important;
+    inset:0!important;
+    display:block!important;
+    background:rgba(246,241,229,.12)!important;
+    pointer-events:none!important;
+  }
+  #bioPast,#bioCurrent{
+    position:relative!important;
+    z-index:1!important;
+  }
+
+  #approach{
+    isolation:isolate!important;
+    background:#f6f1e5!important;
+  }
+  #approach::before{
+    content:""!important;
+    position:absolute!important;
+    z-index:-2!important;
+    inset:0!important;
+    background:url("poster-approach-hq.webp") center/cover no-repeat!important;
+    pointer-events:none!important;
+  }
+  #approach::after{
+    content:""!important;
+    position:absolute!important;
+    z-index:-1!important;
+    inset:0!important;
+    background:rgba(246,241,229,.12)!important;
+    pointer-events:none!important;
+  }
+}
+
+
+/* ACTUAL MOBILE SCENE IMAGES — no pseudo-elements, no desktop endpoint dependency */
+.mobile-scene-bg{display:none}
+@media(max-width:760px){
+  #bio,#approach{isolation:isolate!important;background:#f6f1e5!important}
+  .mobile-scene-bg{
+    display:block!important;
+    position:absolute!important;
+    z-index:0!important;
+    inset:0!important;
+    width:100%!important;
+    height:100%!important;
+    object-fit:cover!important;
+    object-position:center!important;
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:none!important;
+  }
+  #bioPast,#bioCurrent,#approach .approach-text,#approach .approach-photo{
+    position:relative!important;
+    z-index:2!important;
+  }
+  /* Neutralize the previous pseudo-background experiment. */
+  #bio::before,#bio::after,#approach::before,#approach::after{content:none!important;display:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -1301,7 +1381,7 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
  <div id="dream"></div>
 
  <div id="home" class="newcopy"><h1>Giulio Rocchi</h1><div class="sub">Psichiatra | psicoterapeuta</div><div class="city">A Genova, Novi Ligure e online.</div><div class="newactions"><button class="pill primary" id="bookHome">Prenota una visita</button><button class="pill" id="who">Chi sono</button></div></div>
-<div id="bio" class="panelcopy">
+<div id="bio" class="panelcopy"><img id="mobileBioBg" class="mobile-scene-bg" src="poster-bio-hq.webp" alt="">
   <div id="bioPast" class="bio-state active">
     <h2>Chi sono</h2><p>Sono Giulio Rocchi, medico chirurgo specialista in Psichiatria, laureato e specializzato presso l’Università degli Studi di Genova.</p><p>Nel corso del mio percorso professionale ho maturato esperienza nel Servizio Psichiatrico di Diagnosi e Cura e in Pronto Soccorso; ho inoltre ricoperto incarichi di Direzione Sanitaria in servizi dedicati alla salute mentale e alle dipendenze.</p><p>Affianco all’attività clinica l’interesse per la ricerca neuroscientifica, in particolare ai circuiti neurali del temperamento e dell’affettività e ai disturbi correlati a quelle aree.</p><div class="story-nav"><button class="story-back" id="backHome" aria-label="Indietro">←</button><button class="pill primary rise nav-arrow" id="currentBtn">Cosa faccio attualmente</button></div>
   </div>
@@ -1309,7 +1389,7 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
     <h2>Attualmente</h2><p>Sono Dirigente Medico presso l’ASL di Alessandria e lavoro presso il reparto di Psichiatria dell’Ospedale San Giacomo di Novi Ligure; parallelamente all’attività ospedaliera ricevo privatamente a Genova e Novi Ligure e svolgo consulenze psichiatriche anche online.</p><p>Nel mio lavoro integro il rigore clinico e scientifico con l’attenzione alla dimensione simbolica e alla psicologia analitica di orientamento junghiano.</p><div class="story-nav"><button class="story-back" id="backPast" aria-label="Indietro">←</button><button class="pill primary rise nav-arrow" id="approachBtn">Il mio approccio</button></div>
   </div>
 </div>
-<div id="approach" class="panelcopy right">
+<div id="approach" class="panelcopy right"><img id="mobileApproachBg" class="mobile-scene-bg" src="poster-approach-hq.webp" alt="">
   <img class="approach-photo" src="foto-giulio.png" alt="Giulio Rocchi">
   <div class="approach-text">
     <h2>Il mio approccio</h2>
@@ -1442,6 +1522,10 @@ async function playToEnd(video,onDone){
 
   /* No flash: keep the previous scene until the first transition frame is ready. */
   if(video===video1){
+    if(window.matchMedia('(max-width:760px)').matches){
+      home.style.opacity='0';
+      home.style.pointerEvents='none';
+    }
     video.style.opacity='1';
     idle1.style.opacity='0';
     idle1.pause();
@@ -1464,8 +1548,11 @@ async function playToEnd(video,onDone){
 }
 document.getElementById('who').addEventListener('click',()=>{
   if(playing)return;
-  home.style.opacity='0';
-  home.style.pointerEvents='none';
+  /* On mobile keep Home copy/scene intact while Video 1 buffers; hide copy only when transition is ready. */
+  if(!window.matchMedia('(max-width:760px)').matches){
+    home.style.opacity='0';
+    home.style.pointerEvents='none';
+  }
   homeControl.classList.add('visible');
 
   /* Video 1 is metadata-preloaded; asking play() lets the browser stream it progressively. */
