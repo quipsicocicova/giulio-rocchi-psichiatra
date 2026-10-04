@@ -6,76 +6,1592 @@
 <title>Giulio Rocchi</title>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;background:#f6f1e5}
-#boot{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#f6f1e5;color:#0d3933;font-family:Baskerville,Palatino,Georgia,serif}
-.inner{width:min(210px,56vw);text-align:center}
-.mark{width:68px;height:68px;object-fit:contain;margin:0 auto 16px;display:block;animation:pulse 1.6s ease-in-out infinite}
-.label{font-size:12px;line-height:1.2;font-variant:small-caps;text-transform:lowercase;letter-spacing:.18em;margin-bottom:10px}
-.track{height:2px;background:rgba(13,57,51,.16);overflow:hidden}
-.bar{display:block;width:100%;height:100%;background:#0d3933;transform:scaleX(0);transform-origin:left;transition:transform .18s linear}
-.percent{margin-top:8px;font:12px/1.2 Arial,sans-serif;letter-spacing:.08em}
-@keyframes pulse{0%,100%{opacity:.45;transform:scale(.96)}50%{opacity:1;transform:scale(1.03)}}
-@media(prefers-reduced-motion:reduce){.mark{animation:none}}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#eee9dc;overscroll-behavior:none}
+body{font-family:Georgia,"Times New Roman",serif}
+#stage{position:fixed;inset:0;width:100%;height:100vh;height:100dvh;overflow:hidden;touch-action:auto;background:#eee9dc}
+.media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transition:opacity .28s ease}
+#idle1{z-index:1} #posterBio{z-index:2} #video1{z-index:3;opacity:0} #posterApproach{z-index:4} #video2{z-index:5;opacity:0}
+
+/* DREAM EFFECT: ivory haze from the edges, intentionally visible. */
+#dream{
+ position:absolute;z-index:6;inset:0;pointer-events:none;
+ background:
+   radial-gradient(ellipse at center,
+      rgba(244,239,226,0) 34%,
+      rgba(244,239,226,.04) 58%,
+      rgba(244,239,226,.15) 80%,
+      rgba(244,239,226,.34) 100%),
+   linear-gradient(to bottom,
+      rgba(244,239,226,.08) 0%,
+      rgba(244,239,226,0) 28%,
+      rgba(244,239,226,0) 70%,
+      rgba(244,239,226,.18) 100%);
+ box-shadow:inset 0 0 90px 18px rgba(244,239,226,.14);
+}
+/* Local ivory cloud under copy: soft, borderless, blurred. */
+.copy{position:absolute;z-index:8;color:#123d36;text-shadow:0 1px 0 rgba(255,255,255,.35);transition:opacity .35s ease}
+.copy::before{
+ content:"";position:absolute;z-index:-1;inset:-42px -58px;
+ background:radial-gradient(ellipse at center,
+   rgba(244,239,226,.94) 0%,
+   rgba(244,239,226,.72) 42%,
+   rgba(244,239,226,.30) 64%,
+   rgba(244,239,226,0) 82%);
+ filter:blur(18px);
+}
+#identity{left:6vw;top:11vh;max-width:43vw}
+#identity strong{display:block;font-size:clamp(31px,4vw,65px);font-weight:400;line-height:1}
+#identity span{display:block;margin-top:10px;font-size:clamp(16px,1.35vw,23px)}
+
+/* BOTH secondary texts occupy the SAME bottom-right anchor. */
+#places,#role{
+ right:6vw;
+ bottom:max(9vh,calc(env(safe-area-inset-bottom) + 56px));
+ text-align:right;
+ width:min(43vw,670px);
+}
+#places{font-size:clamp(19px,1.8vw,30px);line-height:1.28}
+#role{font-size:clamp(19px,1.65vw,28px);line-height:1.35;opacity:0}
+
+.hint{position:absolute;z-index:9;left:50%;bottom:max(25px,env(safe-area-inset-bottom));transform:translateX(-50%);
+font:11px system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#123d36;white-space:nowrap}
+.progress{position:absolute;z-index:9;left:0;bottom:0;width:100%;height:2px;background:#123d3620}
+.progress i{display:block;width:100%;height:100%;background:#123d36aa;transform-origin:left;transform:scaleX(0)}
+
+@media(max-width:700px){
+ #identity{left:7vw;top:9vh;max-width:82vw}
+ #places,#role{right:7vw;bottom:max(10vh,calc(env(safe-area-inset-bottom) + 52px));width:82vw;text-align:right}
+ .copy::before{inset:-34px -28px}
+ #dream{box-shadow:inset 0 0 60px 12px rgba(244,239,226,.16)}
+}
+
+/* V8: visual overrides only. Transition/state logic is unchanged from V6. */
+#identity{
+ left:50% !important;
+ top:auto !important;
+ bottom:max(8vh,calc(env(safe-area-inset-bottom) + 54px)) !important;
+ width:min(90vw,820px) !important;
+ max-width:none !important;
+ text-align:center !important;
+ transform:translateX(-50%) !important;
+}
+#identity strong{font-size:clamp(34px,4.2vw,68px)}
+#identity span{font-size:clamp(17px,1.45vw,25px);line-height:1.35}
+#places{display:none !important}
+
+/* Ivory haze from image edges / lower border, not a local text blob. */
+#dream{
+ background:
+  radial-gradient(ellipse 78% 72% at 50% 43%,
+   rgba(246,241,229,0) 45%,
+   rgba(246,241,229,.06) 64%,
+   rgba(246,241,229,.18) 82%,
+   rgba(246,241,229,.34) 100%),
+  linear-gradient(to top,
+   rgba(246,241,229,.62) 0%,
+   rgba(246,241,229,.30) 15%,
+   rgba(246,241,229,.07) 31%,
+   rgba(246,241,229,0) 48%) !important;
+ box-shadow:none !important;
+}
+/* Remove the local ivory cloud behind individual copy blocks. */
+.copy::before{display:none !important}
+
+/* Keep bio in the same V6 location; only its wording changed. */
+
+#finalCta{
+ position:absolute;z-index:9;left:50%;
+ bottom:max(8vh,calc(env(safe-area-inset-bottom) + 54px));
+ transform:translate(-50%,20px);text-align:center;
+ opacity:0;pointer-events:none;transition:opacity .4s ease,transform .4s ease;
+ color:#123d36;
+}
+#finalCta.visible{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#finalCta .book{
+ display:inline-block;padding:14px 27px;border:1px solid #123d36;border-radius:999px;
+ color:#123d36;text-decoration:none;background:rgba(246,241,229,.66);
+ font:600 14px/1 system-ui,-apple-system,sans-serif;
+}
+#finalCta .mail{
+ display:block;margin-top:14px;color:#123d36;text-decoration:none;
+ font:15px/1.2 system-ui,-apple-system,sans-serif;
+}
+@media(max-width:700px){
+ #identity{width:88vw !important;bottom:max(10vh,calc(env(safe-area-inset-bottom) + 58px)) !important}
+ #identity strong{font-size:clamp(34px,11vw,52px)}
+ #identity span{font-size:16px}
+}
+
+
+/* === TYPOGRAPHY + CONTRAST REFINEMENT ===
+   Visual-only overrides. Scroll/idle logic unchanged.
+*/
+
+/* Editorial serif chosen to echo the logo's classical letterforms,
+   with local fallbacks so the prototype works without external font loading. */
+body{
+  font-family: "Baskerville", "Libre Baskerville", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+}
+
+/* Stronger ivory fade where the initial copy lives; soft edge haze elsewhere. */
+#dream{
+  background:
+    radial-gradient(ellipse 80% 74% at 50% 42%,
+      rgba(246,241,229,0) 40%,
+      rgba(246,241,229,.05) 59%,
+      rgba(246,241,229,.18) 78%,
+      rgba(246,241,229,.38) 100%),
+    linear-gradient(to top,
+      rgba(246,241,229,.96) 0%,
+      rgba(246,241,229,.82) 13%,
+      rgba(246,241,229,.52) 25%,
+      rgba(246,241,229,.20) 37%,
+      rgba(246,241,229,.05) 47%,
+      rgba(246,241,229,0) 57%) !important;
+}
+
+/* Keep copy crisp over the ivory. */
+.copy{
+  color:#0d3933 !important;
+  text-shadow:none !important;
+}
+
+#identity strong{
+  font-family:"Baskerville","Libre Baskerville","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  font-weight:400 !important;
+  letter-spacing:-.025em;
+  line-height:.98 !important;
+}
+
+#identity span,
+#role{
+  font-family:"Baskerville","Libre Baskerville","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  font-weight:400;
+}
+
+/* Give the subtitle a little of the logo's spaced typographic character
+   without making a sentence hard to read. */
+#identity span{
+  letter-spacing:.01em;
+}
+
+/* CTA follows the same identity rather than system UI typography. */
+#finalCta .book,
+#finalCta .mail{
+  font-family:"Baskerville","Libre Baskerville","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif !important;
+}
+#finalCta .book{
+  font-size:16px !important;
+  font-weight:400 !important;
+  letter-spacing:.015em !important;
+}
+#finalCta .mail{
+  font-size:16px !important;
+}
+
+@media(max-width:700px){
+  #dream{
+    background:
+      radial-gradient(ellipse 90% 76% at 50% 40%,
+        rgba(246,241,229,0) 35%,
+        rgba(246,241,229,.06) 58%,
+        rgba(246,241,229,.20) 80%,
+        rgba(246,241,229,.40) 100%),
+      linear-gradient(to top,
+        rgba(246,241,229,.97) 0%,
+        rgba(246,241,229,.84) 15%,
+        rgba(246,241,229,.52) 29%,
+        rgba(246,241,229,.16) 42%,
+        rgba(246,241,229,0) 57%) !important;
+  }
+}
+
+
+/* LARGE-SCREEN OUTER FRAME */
+html,body{background:#d9d0bd url("background-frame.png") center/cover fixed no-repeat!important}
+body::before{
+ content:"";position:fixed;inset:-44px;z-index:-1;
+ background:
+   linear-gradient(rgba(8,24,19,.38),rgba(8,24,19,.38)),
+   url("background-frame.png") center/cover no-repeat;
+ filter:blur(38px) saturate(.72) brightness(.76);
+ transform:scale(1.09);
+}
+#stage{width:min(100vw,1760px)!important;height:min(100dvh,990px)!important;left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;transform:translate(-50%,-50%);box-shadow:0 20px 78px rgba(15,32,26,.28)}
+@media(max-width:1760px),(max-height:990px){#stage{width:100vw!important;height:100dvh!important;left:0!important;top:0!important;transform:none;box-shadow:none}}
+/* FINAL IVORY CURTAIN */
+#curtain{position:absolute;z-index:20;left:0;right:0;bottom:0;height:100%;background:#f6f1e5;transform:translateY(100%);will-change:transform;pointer-events:none}
+#curtainContent{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:7vh 7vw;color:#0d3933;text-align:center;opacity:0}
+#curtainLogo{width:min(560px,72vw);max-height:34vh;object-fit:contain;margin-bottom:10px}
+#curtainContent .mailLabel{font-size:clamp(17px,1.3vw,22px)}
+#curtainContent .email{color:#0d3933;font-size:clamp(21px,2vw,32px);text-decoration:none}
+#curtainContent .book{margin-top:8px;display:inline-block;padding:15px 29px;border:1px solid #0d3933;border-radius:999px;color:#0d3933;text-decoration:none;font-size:17px}
+#finalCta{display:none!important}
+
+#home{position:absolute;z-index:12;left:50%;bottom:7vh;transform:translateX(-50%);width:min(900px,90vw);text-align:center;color:#0d3933}#home h1,.sub,.city{opacity:0;transform:translateY(14px);animation:fu 1s forwards}#home h1{margin:0;font-size:clamp(38px,4.4vw,72px);font-weight:400;animation-delay:.2s}.sub{font-size:clamp(18px,1.5vw,25px);animation-delay:.45s}.city{font-size:clamp(16px,1.25vw,21px);animation-delay:.7s}.newactions{display:flex;gap:12px;justify-content:center;margin-top:24px;overflow:hidden}.pill{border:1px solid #0d3933;border-radius:999px;padding:13px 25px;background:#f6f1e5cc;color:#0d3933;text-decoration:none;font:400 16px Baskerville,Palatino,Georgia,serif;cursor:pointer}.pill.primary{background:#0d3933;color:#f6f1e5}.newactions .pill{opacity:0;transform:translateY(110%);animation:fu .9s 1s forwards}.newactions .pill+ .pill{animation-delay:1.15s}@keyframes fu{to{opacity:1;transform:none}}.panelcopy{position:absolute;z-index:13;left:6%;top:50%;transform:translateY(-46%);width:min(650px,47vw);max-height:80%;overflow:auto;padding:34px 38px;background:#f6f1e5e8;color:#0d3933;opacity:0;pointer-events:none;transition:.8s}.panelcopy.right{left:auto;right:6%}.panelcopy.show{opacity:1;transform:translateY(-50%);pointer-events:auto}.panelcopy h2{font-size:clamp(30px,3vw,48px);font-weight:400;margin:0 0 18px}.panelcopy p{font-size:clamp(16px,1.05vw,19px);line-height:1.55}.panelcopy .rise{opacity:0;transform:translateY(24px)}.panelcopy.show .rise{animation:fu .8s .45s forwards}#booking{position:absolute;z-index:40;inset:0;background:#f6f1e5;transform:translateX(100%);transition:transform 1s cubic-bezier(.76,0,.24,1);overflow:auto;color:#0d3933}#booking.open{transform:none}.bookingInner{width:min(1180px,88%);margin:auto;padding:50px 0 90px}.bookingTop{display:flex;justify-content:space-between;align-items:center}.bookingTop img{width:min(330px,50vw);max-height:120px;object-fit:contain}.bookingTop button{width:46px;height:46px;border:1px solid #0d393355;border-radius:50%;background:none;font-size:26px}.bookingInner>h2{font-size:clamp(36px,4vw,62px);font-weight:400}.loc{display:grid;grid-template-columns:1.15fr .85fr;gap:38px;padding:38px 0;border-top:1px solid #0d393344}.loc h3{font-size:clamp(25px,2.3vw,36px);font-weight:400;margin:0}.locBtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.map{min-height:180px;border:1px solid #0d393344;display:flex;align-items:center;justify-content:center;text-align:center}@media(max-width:760px){.panelcopy,.panelcopy.right{left:5%;right:auto;top:auto;bottom:5%;transform:translateY(15px);width:90%;max-height:72%;padding:24px}.panelcopy.show{transform:none}.loc{grid-template-columns:1fr}}
+/* === V2 LIGHT / TYPOGRAPHY / STORY STATES === */
+:root{--logo-green:#0d3933;--ivory:#f6f1e5}
+
+
+/* Logo-inspired typography: classical serif + restrained tracked small caps */
+#home h1,.panelcopy h2,.panelcopy h3{
+  font-family:"Baskerville","Libre Baskerville","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  font-weight:400;
+}
+#home h1{letter-spacing:.035em}
+.sub{
+  margin-top:11px;
+  font-variant:small-caps;
+  text-transform:lowercase;
+  letter-spacing:.16em;
+  font-size:clamp(16px,1.35vw,22px)!important;
+}
+.city{margin-top:7px;letter-spacing:.025em}
+.pill{
+  font-family:"Baskerville","Libre Baskerville","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif!important;
+  font-variant:small-caps;
+  text-transform:lowercase;
+  letter-spacing:.105em;
+  font-size:15px!important;
+}
+
+/* Bio has two editorial states on the SAME static tree frame */
+#bio{
+  overflow:hidden;
+  height:min(76vh,760px);
+  min-height:560px;
+}
+.bio-state{
+  opacity:0;transform:translateY(18px);
+  pointer-events:none;position:absolute;inset:34px 38px;
+  overflow:auto;
+  transition:opacity .65s ease,transform .75s cubic-bezier(.2,.7,.2,1);
+}
+.bio-state.active{opacity:1;transform:none;pointer-events:auto}
+#bio.show .bio-state.active p,
+#bio.show .bio-state.active h2{
+  animation:textIn .75s both;
+}
+#bio.show .bio-state.active p:nth-of-type(1){animation-delay:.08s}
+#bio.show .bio-state.active p:nth-of-type(2){animation-delay:.16s}
+#bio.show .bio-state.active p:nth-of-type(3){animation-delay:.24s}
+@keyframes textIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* Approach: portrait + copy, with deliberate paragraph break before objective */
+#approach{
+  left:5.5%!important;right:5.5%!important;top:50%;
+  width:auto!important;max-height:82%;
+  display:grid;grid-template-columns:minmax(250px,.72fr) minmax(420px,1.28fr);
+  gap:clamp(28px,4vw,70px);align-items:center;
+  padding:34px 38px;
+}
+.approach-photo{
+  width:100%;height:min(62vh,650px);object-fit:cover;object-position:center 28%;
+  opacity:0;transform:translateY(20px);
+  transition:opacity .9s ease .12s,transform .9s cubic-bezier(.2,.7,.2,1) .12s;
+}
+#approach.show .approach-photo{opacity:1;transform:none}
+.approach-text{min-width:0}
+#approach.show .approach-text h2,
+#approach.show .approach-text p{
+  animation:textIn .8s both;
+}
+#approach.show .approach-text p:first-of-type{animation-delay:.12s}
+#approach.show .approach-text p.objective{animation-delay:.24s}
+.objective{margin-top:1.35em!important}
+#approach .rise{margin-top:8px}
+
+/* Keep the static final frame visible after each movement */
+#video1,#video2{transition:opacity .45s ease}
+
+/* Booking labels use the same small-cap language */
+.bookingInner>h2,.loc h3{letter-spacing:.01em}
+.locBtns .pill{font-size:14px!important}
+
+@media(max-width:900px){
+  #approach{
+    display:block;left:5%!important;right:auto!important;bottom:4%;top:auto;
+    width:90%!important;max-height:84%;overflow:auto;transform:translateY(15px);
+  }
+  #approach.show{transform:none}
+  .approach-photo{height:34vh;margin-bottom:24px}
+  .bio-state{inset:24px}
+  #bio{height:78vh;min-height:0}
+}
+
+
+/* === V4 requested refinements === */
+body::before{
+  filter:blur(58px) saturate(.68) brightness(.73)!important;
+  transform:scale(1.13)!important;
+}
+#stage{border-radius:18px}
+.panelcopy,#booking,.loc,.mapbox{border-radius:14px!important}
+
+/* Buttons: larger type, less pill-shaped, arrow on primary navigation CTAs */
+.pill{
+  border-radius:9px!important;
+  font-size:17px!important;
+  padding:14px 22px!important;
+  letter-spacing:.095em!important;
+}
+.pill.primary.nav-arrow::after{
+  content:"→";display:inline-block;margin-left:14px;
+  transition:transform .25s ease;
+}
+.pill.primary.nav-arrow:hover::after{transform:translateX(4px)}
+
+/* Chi sono: two genuinely separate blocks in different positions */
+#bio{
+  position:absolute!important;inset:0!important;
+  width:100%!important;height:100%!important;max-height:none!important;
+  min-height:0!important;background:transparent!important;
+  pointer-events:none!important;overflow:visible!important;
+}
+.bio-state{
+  position:absolute!important;
+  width:min(570px,42vw)!important;
+  height:auto!important;max-height:72vh;
+  padding:30px 34px!important;
+  overflow:auto;
+  background:rgba(246,241,229,.88);
+  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+  border-radius:14px;
+  box-shadow:0 12px 38px rgba(13,57,51,.08);
+}
+#bioPast{
+  left:5.5%!important;right:auto!important;
+  top:50%!important;bottom:auto!important;
+  transform:translateY(calc(-50% + 18px))!important;
+}
+#bioPast.active{transform:translateY(-50%)!important}
+#bioCurrent{
+  right:5.5%!important;left:auto!important;
+  top:50%!important;bottom:auto!important;
+  transform:translateY(calc(-50% + 18px))!important;
+}
+#bioCurrent.active{transform:translateY(-50%)!important}
+
+/* Home control from Chi sono onward */
+#homeControl{
+  position:absolute;z-index:24;top:24px;right:28px;
+  display:flex;align-items:center;gap:10px;
+  border:1px solid rgba(13,57,51,.24);border-radius:9px;
+  background:rgba(246,241,229,.88);color:#0d3933;
+  padding:9px 14px 9px 10px;
+  font:400 14px/1 "Baskerville","Palatino Linotype",Palatino,Georgia,serif;
+  font-variant:small-caps;text-transform:lowercase;letter-spacing:.10em;
+  opacity:0;transform:translateY(-10px);pointer-events:none;
+  transition:opacity .45s ease,transform .45s ease,background .25s ease;
+  cursor:pointer;
+}
+#homeControl.visible{opacity:1;transform:none;pointer-events:auto}
+#homeControl:hover{background:#f6f1e5}
+#homeControl img{width:34px;height:25px;object-fit:contain}
+
+/* Booking header: centered logo, H1 and intro; locations remain as before after divider */
+.booking-head{
+  position:relative!important;display:block!important;
+  text-align:center!important;margin-bottom:22px!important;
+}
+.booking-logo{
+  display:block;margin:0 auto 24px!important;
+  width:min(360px,58vw)!important;object-position:center!important;
+}
+.close-booking{position:absolute;right:0;top:0}
+.booking-title{text-align:center!important;margin:0 0 8px!important}
+.booking-intro{text-align:center!important;margin:0 auto 42px!important;max-width:720px!important}
+.booking-intro::after{
+  content:"";display:block;width:100%;height:1px;
+  background:rgba(13,57,51,.25);margin-top:38px;
+}
+
+@media(max-width:760px){
+  #stage{border-radius:0}
+  .bio-state{
+    left:5%!important;right:auto!important;width:90%!important;
+    top:auto!important;bottom:5%!important;max-height:74vh;
+    transform:translateY(18px)!important;
+  }
+  .bio-state.active{transform:none!important}
+  #homeControl{top:max(14px,env(safe-area-inset-top));right:14px}
+}
+
+
+/* === V4.1 CHI SONO viewport containment fix === */
+/* Override the older .panelcopy positioning rules completely. */
+#bio{
+  left:0!important;right:0!important;top:0!important;bottom:0!important;
+  transform:none!important;
+  padding:0!important;
+}
+#bioPast,#bioCurrent{
+  box-sizing:border-box!important;
+  top:50%!important;
+  bottom:auto!important;
+  max-height:calc(100% - 120px)!important;
+  overflow:auto!important;
+}
+#bioPast{
+  left:5.5%!important;right:auto!important;
+  transform:translateY(calc(-50% + 18px))!important;
+}
+#bioPast.active{transform:translateY(-50%)!important}
+#bioCurrent{
+  left:auto!important;right:5.5%!important;
+  transform:translateY(calc(-50% + 18px))!important;
+}
+#bioCurrent.active{transform:translateY(-50%)!important}
+
+@media(max-height:760px) and (min-width:761px){
+  #bioPast,#bioCurrent{
+    top:56%!important;
+    max-height:calc(100% - 105px)!important;
+  }
+}
+@media(max-width:760px){
+  #bioPast,#bioCurrent{
+    top:auto!important;
+    bottom:max(4%,env(safe-area-inset-bottom))!important;
+    left:5%!important;right:auto!important;
+    width:90%!important;
+    max-height:calc(100% - 105px)!important;
+    transform:translateY(18px)!important;
+  }
+  #bioPast.active,#bioCurrent.active{transform:none!important}
+}
+
+
+/* === V4.2: stronger outer blur + booking header alignment === */
+body::before{
+  filter:blur(82px) saturate(.64) brightness(.72)!important;
+  transform:scale(1.18)!important;
+}
+
+/* Booking: force the whole introductory header onto one centered axis. */
+#booking .booking-head{
+  position:relative!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  text-align:center!important;
+}
+#booking .booking-logo{
+  display:block!important;
+  width:min(360px,58vw)!important;
+  height:auto!important;
+  margin:0 auto 24px!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  align-self:center!important;
+}
+#booking .booking-title{
+  width:100%!important;
+  text-align:center!important;
+  margin:0 auto 8px!important;
+}
+#booking .booking-intro{
+  width:min(720px,100%)!important;
+  text-align:center!important;
+  margin:0 auto 42px!important;
+}
+#booking .close-booking{
+  position:absolute!important;
+  top:0!important;
+  right:0!important;
+}
+
+
+/* === V4.3 ACTUAL SELECTOR + OUTER BACKGROUND FIX === */
+
+/* The unblurred image was still assigned directly to html/body.
+   Remove it: ONLY the blurred pseudo-element now carries the photo. */
+html,body{
+  background:#18231d!important;
+}
+body::before{
+  content:""!important;
+  position:fixed!important;
+  inset:-110px!important;
+  z-index:0!important;
+  background:
+    linear-gradient(rgba(8,24,19,.30),rgba(8,24,19,.30)),
+    url("background-frame.png") center/cover no-repeat!important;
+  filter:blur(82px) saturate(.68) brightness(.78)!important;
+  transform:scale(1.12)!important;
+  pointer-events:none!important;
+}
+#stage{
+  z-index:1!important;
+}
+
+/* The real HTML uses .bookingTop / .bookingInner, not the old
+   .booking-head / .booking-logo selectors. Center the ACTUAL elements. */
+#booking .bookingInner{
+  width:min(1180px,88%)!important;
+  margin:0 auto!important;
+}
+#booking .bookingTop{
+  position:relative!important;
+  display:flex!important;
+  justify-content:center!important;
+  align-items:flex-start!important;
+  width:100%!important;
+  min-height:145px!important;
+}
+#booking .bookingTop img{
+  display:block!important;
+  width:min(360px,58vw)!important;
+  max-height:130px!important;
+  height:auto!important;
+  margin:0 auto!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+}
+#booking .bookingTop button{
+  position:absolute!important;
+  right:0!important;
+  top:0!important;
+}
+#booking .bookingInner>h2{
+  width:100%!important;
+  margin:12px auto 8px!important;
+  text-align:center!important;
+}
+#booking .bookingInner>p{
+  width:min(720px,100%)!important;
+  margin:0 auto 38px!important;
+  text-align:center!important;
+}
+#booking .bookingInner>p::after{
+  content:"";
+  display:block;
+  width:100%;
+  height:1px;
+  margin-top:34px;
+  background:rgba(13,57,51,.24);
+}
+
+/* Avoid a doubled divider immediately after the intro divider. */
+#booking .bookingInner>p + .loc{
+  border-top:0!important;
+}
+
+
+/* === V4.4 booking home control, symmetric to close button === */
+#booking .bookingTop .booking-home{
+  position:absolute!important;
+  left:0!important;
+  right:auto!important;
+  top:0!important;
+  width:auto!important;
+  height:46px!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:9px!important;
+  padding:8px 13px 8px 9px!important;
+  border:1px solid rgba(13,57,51,.24)!important;
+  border-radius:9px!important;
+  background:rgba(246,241,229,.92)!important;
+  color:#0d3933!important;
+  cursor:pointer!important;
+  font:400 14px/1 "Baskerville","Palatino Linotype",Palatino,Georgia,serif!important;
+  font-variant:small-caps!important;
+  text-transform:lowercase!important;
+  letter-spacing:.10em!important;
+}
+#booking .bookingTop .booking-home img{
+  width:34px!important;
+  height:25px!important;
+  max-height:25px!important;
+  margin:0!important;
+  object-fit:contain!important;
+}
+#booking .bookingTop .booking-home:hover{background:#fffaf0!important}
+
+@media(max-width:620px){
+  #booking .bookingTop .booking-home span{display:none}
+  #booking .bookingTop .booking-home{
+    width:46px!important;padding:8px!important;justify-content:center!important;
+  }
+}
+
+
+/* === V5: real Street View embeds + responsive tablet/mobile === */
+.streetview{padding:0!important;overflow:hidden!important;min-height:230px!important}
+.streetview iframe{
+  display:block;width:100%;height:100%;min-height:230px;border:0;
+}
+
+/* X and Home control share the same 46px vertical center. */
+#booking .bookingTop{position:relative!important}
+#booking #closeBooking{
+  position:absolute!important;right:0!important;top:0!important;
+  width:46px!important;height:46px!important;padding:0!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  line-height:1!important;
+}
+
+/* Tablet */
+@media (min-width:761px) and (max-width:1100px){
+  #stage{
+    width:100vw!important;height:100dvh!important;left:0!important;top:0!important;
+    transform:none!important;border-radius:0!important;box-shadow:none!important;
+  }
+  #booking .bookingInner{width:90%!important}
+  .bio-state{width:min(520px,46vw)!important}
+  #approach{
+    left:4%!important;right:4%!important;
+    grid-template-columns:minmax(220px,.65fr) minmax(380px,1.35fr)!important;
+    gap:28px!important;
+  }
+}
+
+/* Mobile: no external blurred frame; the experience fills the screen. */
+@media (max-width:760px){
+  html,body{background:#f6f1e5!important}
+  body::before{display:none!important}
+  #stage{
+    width:100vw!important;height:100dvh!important;left:0!important;top:0!important;
+    right:auto!important;bottom:auto!important;transform:none!important;
+    border-radius:0!important;box-shadow:none!important;
+  }
+
+  #home{width:90%!important;bottom:max(6vh,calc(env(safe-area-inset-bottom) + 24px))!important}
+  #home h1{font-size:clamp(34px,10vw,50px)!important}
+  .newactions{gap:9px!important;flex-wrap:wrap!important}
+  .newactions .pill{font-size:16px!important;padding:13px 18px!important}
+
+  #bioPast,#bioCurrent{
+    left:5%!important;right:auto!important;top:auto!important;
+    bottom:max(4%,env(safe-area-inset-bottom))!important;
+    width:90%!important;max-height:76dvh!important;
+    transform:translateY(18px)!important;
+  }
+  #bioPast.active,#bioCurrent.active{transform:none!important}
+
+  #homeControl{
+    top:max(12px,env(safe-area-inset-top))!important;right:12px!important;
+    width:46px!important;height:46px!important;padding:8px!important;justify-content:center!important;
+  }
+  #homeControl span{display:none!important}
+
+  #approach{
+    left:5%!important;right:auto!important;top:auto!important;
+    bottom:max(3%,env(safe-area-inset-bottom))!important;
+    width:90%!important;max-height:82dvh!important;
+    display:block!important;overflow:auto!important;padding:22px!important;
+  }
+  .approach-photo{height:32dvh!important;margin-bottom:20px!important}
+
+  #booking .bookingInner{width:90%!important;padding-top:22px!important}
+  #booking .bookingTop{min-height:118px!important}
+  #booking .bookingTop>img{
+    width:min(210px,50vw)!important;max-height:90px!important;
+  }
+  #booking .booking-home{
+    width:46px!important;height:46px!important;padding:8px!important;justify-content:center!important;
+  }
+  #booking .booking-home span{display:none!important}
+
+  #booking .loc{
+    grid-template-columns:1fr!important;gap:18px!important;padding:30px 0!important;
+  }
+  .streetview iframe{min-height:250px!important}
+  #booking .locBtns{
+    display:grid!important;grid-template-columns:1fr!important;
+  }
+  #booking .locBtns .pill{width:100%!important;text-align:center!important}
+}
+
+
+/* Online booking image */
+.online-photo{padding:0!important;overflow:hidden!important;min-height:230px!important}
+.online-photo img{
+  display:block;width:100%;height:100%;min-height:230px;
+  object-fit:cover;object-position:center;
+}
+@media(max-width:760px){
+  .online-photo img{min-height:250px;max-height:320px}
+}
+
+
+/* === MOBILE TAP CLEANUP ===
+   Legacy scroll/scrub interaction is gone; allow native touch behavior again. */
+#stage{touch-action:auto!important}
+button,.pill,a,#homeControl,#bookingHome,#closeBooking{
+  pointer-events:auto!important;
+  touch-action:manipulation!important;
+  -webkit-tap-highlight-color:rgba(13,57,51,.10);
+}
+#home,#home .newactions{
+  pointer-events:auto;
+}
+#dream{
+  pointer-events:none!important;
+}
+#booking{
+  touch-action:pan-y!important;
+  -webkit-overflow-scrolling:touch;
+}
+#booking .streetview,
+#booking .streetview iframe{
+  touch-action:auto!important;
+}
+@media(max-width:760px){
+  #stage{touch-action:auto!important}
+  #home{z-index:30!important;pointer-events:auto!important}
+  #home .pill{position:relative;z-index:31;pointer-events:auto!important}
+}
+
+
+/* === MOBILE QUICK MENU + SCROLLABLE STORY PANELS === */
+
+/* The tree logogram becomes the persistent menu trigger after leaving home. */
+#homeControl{
+  width:52px!important;height:52px!important;
+  padding:8px!important;
+  justify-content:center!important;
+  border-radius:10px!important;
+}
+#homeControl img{
+  width:36px!important;height:30px!important;
+}
+#quickMenu{
+  position:absolute;z-index:35;
+  top:84px;right:28px;
+  min-width:150px;
+  padding:7px;
+  display:flex;flex-direction:column;gap:4px;
+  background:rgba(246,241,229,.96);
+  border:1px solid rgba(13,57,51,.22);
+  border-radius:11px;
+  box-shadow:0 14px 38px rgba(13,57,51,.12);
+  opacity:0;transform:translateY(-8px) scale(.98);
+  transform-origin:top right;
+  pointer-events:none;
+  transition:opacity .25s ease,transform .25s ease;
+}
+#quickMenu.open{
+  opacity:1;transform:none;pointer-events:auto;
+}
+#quickMenu button{
+  appearance:none;border:0;background:transparent;color:#0d3933;
+  padding:11px 13px;border-radius:7px;text-align:left;cursor:pointer;
+  font:400 16px/1 "Baskerville","Palatino Linotype",Palatino,Georgia,serif;
+  font-variant:small-caps;text-transform:lowercase;letter-spacing:.10em;
+}
+#quickMenu button:hover{background:rgba(13,57,51,.07)}
+
+/* Mobile: text panels must actually scroll, while the page itself stays immersive. */
+@media(max-width:760px){
+  #homeControl{
+    top:max(12px,env(safe-area-inset-top))!important;
+    right:12px!important;
+  }
+  #quickMenu{
+    top:max(72px,calc(env(safe-area-inset-top) + 72px));
+    right:12px;
+  }
+
+  #bioPast,#bioCurrent{
+    max-height:76dvh!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+    touch-action:pan-y!important;
+    padding-bottom:30px!important;
+  }
+
+  /* Approach on phone: text FIRST, photo SECOND, all inside one scrollable panel. */
+  #approach{
+    display:flex!important;
+    flex-direction:column!important;
+    max-height:82dvh!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+    touch-action:pan-y!important;
+  }
+  #approach .approach-text{order:1!important}
+  #approach .approach-photo{
+    order:2!important;
+    height:auto!important;
+    max-height:none!important;
+    aspect-ratio:4/5;
+    object-fit:cover!important;
+    margin:26px 0 4px!important;
+  }
+
+  /* Keep buttons tappable while panels themselves pan vertically. */
+  #bioPast button,#bioCurrent button,#approach button{
+    touch-action:manipulation!important;
+  }
+}
+
+#bioCurrent:not(.active){pointer-events:none!important}
+#bioCurrent:not(.active) #approachBtn{pointer-events:none!important}
+@media(max-width:760px){
+#bio{pointer-events:none!important}
+#bioPast,#bioCurrent{height:76dvh!important;max-height:calc(100dvh - 105px)!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important;touch-action:pan-y!important;pointer-events:none!important}
+#bioPast.active,#bioCurrent.active{pointer-events:auto!important}
+#approach{height:82dvh!important;max-height:calc(100dvh - 90px)!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-y:contain!important;touch-action:pan-y!important}
+#approach .approach-text{order:1!important}#approach .approach-photo{order:2!important}
+}
+/* === CLEAN FINAL NAVIGATION / MOBILE NATURAL PAGE SCROLL === */
+.story-nav{display:flex;align-items:center;gap:10px;margin-top:22px}
+.story-nav .rise{margin-top:0!important}
+.story-back{
+  width:48px;height:48px;flex:0 0 48px;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(13,57,51,.28);border-radius:9px;
+  background:rgba(246,241,229,.88);color:#0d3933;font-size:25px;line-height:1;
+  cursor:pointer;
+}
+.story-back:hover{background:#fffaf0}
+
+@media(max-width:760px){
+  /* The document itself scrolls. There are NO nested scrolling boxes. */
+  html,body{height:auto!important;min-height:100%!important;overflow-x:hidden!important}
+  body.story-reading{overflow-y:auto!important;background:#f6f1e5!important}
+  body.story-reading #stage{
+    position:relative!important;
+    height:auto!important;min-height:100dvh!important;
+    overflow:visible!important;
+  }
+  body.story-reading #dream,
+  body.story-reading .media,
+  body.story-reading .poster{
+    position:fixed!important;
+    width:100vw!important;height:100dvh!important;
+  }
+
+  #bioPast,#bioCurrent,#approach{
+    height:auto!important;max-height:none!important;
+    overflow:visible!important;touch-action:auto!important;
+    -webkit-overflow-scrolling:auto!important;
+  }
+  #bioPast.active,#bioCurrent.active{pointer-events:auto!important}
+
+  #bio{
+    height:auto!important;min-height:0!important;overflow:visible!important;
+  }
+
+  /* Current story panel becomes ordinary page content. */
+  #bioPast,#bioCurrent{
+    position:relative!important;
+    left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+    width:90%!important;margin:18vh auto 10vh!important;
+    transform:none!important;
+  }
+  #bioPast:not(.active),#bioCurrent:not(.active){display:none!important}
+
+  #approach{
+    position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+    width:90%!important;margin:18vh auto 10vh!important;
+    transform:none!important;
+    display:none!important;
+  }
+  #approach.show{display:flex!important;flex-direction:column!important}
+  #approach .approach-text{order:1!important}
+  #approach .approach-photo{order:2!important;height:auto!important;aspect-ratio:4/5;margin:28px 0 0!important}
+
+  .story-nav{width:100%}
+  .story-nav .pill{flex:1;text-align:center}
+}
+
+
+/* Asset-name/fallback fix */
+#stage{
+  background:#f6f1e5 url("poster-home-hq.webp") center/cover no-repeat!important;
+}
+
+
+/* =========================================================
+   AUTHORITATIVE MOBILE SCROLL MODEL
+   Mobile only: fixed fullscreen scene + independently scrollable editorial panel.
+   This block supersedes all earlier mobile/story-reading experiments.
+   ========================================================= */
+@media (max-width:760px){
+  html,body{
+    width:100%!important;
+    height:100%!important;
+    overflow:hidden!important;
+    overscroll-behavior:none!important;
+  }
+  body.story-reading{overflow:hidden!important}
+
+  #stage,
+  body.story-reading #stage{
+    position:fixed!important;
+    inset:0!important;
+    width:100vw!important;
+    height:100dvh!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow:hidden!important;
+  }
+
+  #bio,
+  body.story-reading #bio{
+    position:absolute!important;
+    inset:0!important;
+    width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    max-height:none!important;
+    padding:0!important;
+    overflow:visible!important;
+    pointer-events:none!important;
+  }
+
+  #bioPast,#bioCurrent,
+  body.story-reading #bioPast,
+  body.story-reading #bioCurrent{
+    position:absolute!important;
+    left:5%!important;
+    right:auto!important;
+    top:auto!important;
+    bottom:max(4%,env(safe-area-inset-bottom))!important;
+    width:90%!important;
+    height:auto!important;
+    max-height:78dvh!important;
+    margin:0!important;
+    padding:25px 24px 30px!important;
+    transform:none!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior:contain!important;
+    touch-action:pan-y!important;
+    box-sizing:border-box!important;
+  }
+  #bioPast:not(.active),#bioCurrent:not(.active){
+    display:none!important;
+    pointer-events:none!important;
+  }
+  #bioPast.active,#bioCurrent.active{
+    display:block!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+
+  #approach,
+  body.story-reading #approach{
+    position:absolute!important;
+    left:5%!important;
+    right:auto!important;
+    top:auto!important;
+    bottom:max(3%,env(safe-area-inset-bottom))!important;
+    width:90%!important;
+    height:auto!important;
+    max-height:82dvh!important;
+    margin:0!important;
+    padding:24px!important;
+    transform:none!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior:contain!important;
+    touch-action:pan-y!important;
+    box-sizing:border-box!important;
+  }
+  #approach.show{
+    display:flex!important;
+    flex-direction:column!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+  #approach .approach-text{order:1!important}
+  #approach .approach-photo{
+    order:2!important;
+    height:auto!important;
+    max-height:none!important;
+    aspect-ratio:4/5!important;
+    margin:28px 0 0!important;
+    object-fit:cover!important;
+  }
+
+  #bioPast p,#bioCurrent p,#approach p,
+  #bioPast h2,#bioCurrent h2,#approach h2,
+  #approach img{
+    touch-action:pan-y!important;
+  }
+  #bioPast button,#bioCurrent button,#approach button{
+    touch-action:manipulation!important;
+  }
+}
+
+
+/* ==========================================================
+   MOBILE = NORMAL WEB PAGE
+   No fixed viewport, no nested scroll, no touch interception.
+   Background media is simply cover artwork behind the section.
+   ========================================================== */
+@media(max-width:760px){
+  html,body{
+    height:auto!important;
+    min-height:100%!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior:auto!important;
+    touch-action:auto!important;
+    background:#f6f1e5!important;
+  }
+  body::before{display:none!important}
+
+  #stage{
+    position:relative!important;
+    inset:auto!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:100svh!important;
+    max-height:none!important;
+    overflow:visible!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    transform:none!important;
+    background:#f6f1e5!important;
+  }
+
+  /* Media behaves as ordinary cover background, never as the scroll container. */
+  #idle1,#video1,#video2,
+  #posterHome,#posterBio,#posterApproach,#dream{
+    position:absolute!important;
+    left:0!important;right:0!important;top:0!important;
+    width:100%!important;
+    height:100svh!important;
+    object-fit:cover!important;
+    pointer-events:none!important;
+  }
+
+  #home{
+    position:relative!important;
+    left:auto!important;bottom:auto!important;
+    transform:none!important;
+    width:90%!important;
+    min-height:100svh!important;
+    margin:0 auto!important;
+    padding:62svh 0 7vh!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:flex-end!important;
+  }
+
+  /* Bio becomes normal-flow content. Its background remains the scene artwork. */
+  #bio{
+    position:relative!important;
+    inset:auto!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:100svh!important;
+    max-height:none!important;
+    overflow:visible!important;
+    pointer-events:auto!important;
+    padding:14vh 0 9vh!important;
+  }
+
+  #bioPast,#bioCurrent,
+  body.story-reading #bioPast,body.story-reading #bioCurrent{
+    position:relative!important;
+    inset:auto!important;
+    left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+    width:90%!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0 auto!important;
+    padding:25px 24px!important;
+    overflow:visible!important;
+    transform:none!important;
+    touch-action:auto!important;
+  }
+  #bioPast:not(.active),#bioCurrent:not(.active){display:none!important}
+  #bioPast.active,#bioCurrent.active{display:block!important;opacity:1!important;pointer-events:auto!important}
+
+  #approach,
+  body.story-reading #approach{
+    position:relative!important;
+    inset:auto!important;
+    left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+    width:90%!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0 auto!important;
+    padding:25px 24px!important;
+    overflow:visible!important;
+    transform:none!important;
+    touch-action:auto!important;
+  }
+  #approach.show{display:flex!important;flex-direction:column!important;opacity:1!important;pointer-events:auto!important}
+  #approach .approach-text{order:1!important}
+  #approach .approach-photo{order:2!important;height:auto!important;aspect-ratio:4/5!important;margin:28px 0 0!important}
+
+  /* Menu remains available while reading. */
+  #homeControl{position:fixed!important}
+  #quickMenu{position:fixed!important}
+
+  /* Booking remains its own normal scrollable page/panel. */
+  #booking{position:fixed!important;overflow-y:auto!important;touch-action:pan-y!important}
+}
+
+
+/* DESKTOP SAFETY: mobile normal-flow experiment must never affect desktop */
+@media(min-width:761px){
+  body.story-reading{overflow:hidden!important}
+  #stage{position:fixed!important}
+  #bio{position:absolute!important}
+}
+
+
+/* Endpoint posters must never appear before their transition finishes. */
+#posterBio,#posterApproach{opacity:0!important}
+#posterBio.endpoint-visible,#posterApproach.endpoint-visible{opacity:1!important}
+
+
+/* Booking close control */
+#closeBooking{
+  color:#0d3933!important;
+  -webkit-text-fill-color:#0d3933!important;
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  font-family:Arial,sans-serif!important;
+  line-height:1!important;
+}
+
+
+
+/* =========================================================
+   UNIFIED BUILD — GLOBAL PRELOADER + AUTHORITATIVE MOBILE CSS
+   Desktop rules above remain unchanged.
+   ========================================================= */
+#preloader{
+  position:fixed;z-index:99999;inset:0;display:flex;align-items:center;justify-content:center;
+  background:#f6f1e5;color:#0d3933;opacity:1;visibility:visible;
+  transition:opacity .5s ease,visibility 0s linear .5s;
+}
+#preloader.done{opacity:0;visibility:hidden;pointer-events:none}
+.preload-inner{width:min(210px,56vw);text-align:center}
+.preload-inner img{display:block;width:68px;height:68px;object-fit:contain;margin:0 auto 16px;animation:unifiedPulse 1.6s ease-in-out infinite}
+.preload-label{font:400 12px/1.2 Baskerville,Palatino,Georgia,serif;font-variant:small-caps;text-transform:lowercase;letter-spacing:.18em;margin-bottom:10px}
+.preload-track{height:2px;background:rgba(13,57,51,.16);overflow:hidden}
+.preload-track i{display:block;width:100%;height:100%;background:#0d3933;transform:scaleX(0);transform-origin:left;transition:transform .15s linear}
+#preloadPct{margin-top:8px;font:12px/1.2 Arial,sans-serif;letter-spacing:.08em}
+@keyframes unifiedPulse{0%,100%{opacity:.45;transform:scale(.96)}50%{opacity:1;transform:scale(1.03)}}
+@media(prefers-reduced-motion:reduce){.preload-inner img{animation:none}}
+
+@media(max-width:760px){
+  html,body{
+    width:100%!important;height:auto!important;min-height:100%!important;
+    overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:auto!important;
+    background:#f6f1e5!important;
+  }
+  body::before{display:none!important}
+
+  #stage{
+    position:relative!important;inset:auto!important;left:auto!important;top:auto!important;
+    width:100%!important;height:auto!important;min-height:100svh!important;max-height:none!important;
+    transform:none!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;
+    background:#f6f1e5 url("poster-home-hq.webp") center top/cover no-repeat!important;
+  }
+
+  /* Home remains one fullscreen scene; same desktop idle/video assets. */
+  #idle1,#video1,#video2,#posterBio,#posterApproach,#dream{
+    position:absolute!important;left:0!important;right:0!important;top:0!important;
+    width:100%!important;height:100svh!important;object-fit:cover!important;pointer-events:none!important;
+  }
+  #home{
+    position:relative!important;left:auto!important;bottom:auto!important;transform:none!important;
+    width:90%!important;min-height:100svh!important;margin:0 auto!important;
+    padding:62svh 0 7vh!important;display:flex!important;flex-direction:column!important;
+    justify-content:flex-end!important;z-index:30!important;pointer-events:auto!important;
+  }
+  #home h1{font-size:clamp(34px,10vw,50px)!important}
+  .newactions{gap:9px!important;flex-wrap:wrap!important}
+  .newactions .pill{font-size:16px!important;padding:13px 18px!important}
+
+  /* Bio is ordinary page content; no nested scrolling. */
+  #bio{
+    position:relative!important;inset:auto!important;left:auto!important;right:auto!important;
+    top:auto!important;bottom:auto!important;width:100%!important;height:auto!important;
+    min-height:100svh!important;max-height:none!important;padding:14vh 0 9vh!important;
+    overflow:visible!important;transform:none!important;pointer-events:auto!important;
+  }
+  #bioPast,#bioCurrent{
+    position:relative!important;inset:auto!important;left:auto!important;right:auto!important;
+    top:auto!important;bottom:auto!important;width:90%!important;height:auto!important;max-height:none!important;
+    margin:0 auto!important;padding:25px 24px!important;overflow:visible!important;
+    transform:none!important;touch-action:auto!important;
+    background:rgba(246,241,229,.93)!important;
+  }
+  #bioPast:not(.active),#bioCurrent:not(.active){display:none!important}
+  #bioPast.active,#bioCurrent.active{display:block!important;opacity:1!important;pointer-events:auto!important}
+  #bioPast p,#bioCurrent p,#approach p{font-size:16px!important;line-height:1.55!important}
+
+  /* Approach: normal-flow page; text, controls, then portrait. */
+  #approach{
+    position:relative!important;inset:auto!important;left:auto!important;right:auto!important;
+    top:auto!important;bottom:auto!important;width:90%!important;height:auto!important;max-height:none!important;
+    margin:14vh auto 9vh!important;padding:25px 24px!important;overflow:visible!important;
+    transform:none!important;touch-action:auto!important;display:none!important;
+  }
+  #approach.show{display:flex!important;flex-direction:column!important;opacity:1!important;pointer-events:auto!important}
+  #approach .approach-text{order:1!important}
+  #approach .approach-photo{order:2!important;width:100%!important;height:auto!important;max-height:none!important;aspect-ratio:4/5!important;object-fit:cover!important;margin:28px 0 0!important}
+
+  .story-nav{display:flex!important;align-items:center!important;gap:10px!important;margin-top:22px!important}
+  .story-nav .pill{flex:1!important;text-align:center!important}
+  .story-back{flex:0 0 48px!important}
+
+  #homeControl{position:fixed!important;top:max(12px,env(safe-area-inset-top))!important;right:12px!important}
+  #quickMenu{position:fixed!important;top:max(72px,calc(env(safe-area-inset-top) + 72px))!important;right:12px!important}
+
+  #booking{position:fixed!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important}
+  #booking .bookingInner{width:90%!important;padding-top:22px!important}
+  #booking .loc{grid-template-columns:1fr!important;gap:18px!important;padding:30px 0!important}
+  #booking .locBtns{display:grid!important;grid-template-columns:1fr!important}
+  #booking .locBtns .pill{width:100%!important;text-align:center!important}
+  .streetview iframe{min-height:250px!important}
+}
+
 </style>
 </head>
 <body>
-<div id="boot">
- <div class="inner">
-  <img class="mark" src="logogramma-rocchi.jpg" alt="Logo">
-  <div class="label">Caricamento</div>
-  <div class="track"><i class="bar" id="bar"></i></div>
-  <div class="percent" id="pct">0%</div>
- </div>
+<div id="preloader" aria-label="Caricamento"><div class="preload-inner"><img src="logogramma-rocchi.png" alt=""><div class="preload-label">Loading</div><div class="preload-track"><i id="preloadBar"></i></div><div id="preloadPct">0%</div></div></div>
+<div id="stage">
+ <img id="posterBio" class="media endpoint-poster" src="poster-bio-hq.webp" alt="" style="opacity:0">
+  <img id="posterApproach" class="media endpoint-poster" src="poster-approach-hq.webp" alt="" style="opacity:0">
+  <video id="idle1" class="media" muted playsinline autoplay loop preload="auto" src="idle-start.mp4" poster="poster-home-hq.webp"></video>
+  <video id="video1" class="media transition-video" muted playsinline preload="none" src="video1-web.mp4"></video>
+  <video id="video2" class="media transition-video" muted playsinline preload="none" src="video2-web.mp4"></video>
+ <div id="dream"></div>
+
+ <div id="home" class="newcopy"><h1>Giulio Rocchi</h1><div class="sub">Psichiatra | psicoterapeuta</div><div class="city">A Genova, Novi Ligure e online.</div><div class="newactions"><button class="pill primary" id="bookHome">Prenota una visita</button><button class="pill" id="who">Chi sono</button></div></div>
+<div id="bio" class="panelcopy">
+  <div id="bioPast" class="bio-state active">
+    <h2>Chi sono</h2><p>Sono Giulio Rocchi, medico chirurgo specialista in Psichiatria, laureato e specializzato presso l’Università degli Studi di Genova.</p><p>Nel corso del mio percorso professionale ho maturato esperienza nel Servizio Psichiatrico di Diagnosi e Cura e in Pronto Soccorso; ho inoltre ricoperto incarichi di Direzione Sanitaria in servizi dedicati alla salute mentale e alle dipendenze.</p><p>Affianco all’attività clinica l’interesse per la ricerca neuroscientifica, in particolare ai circuiti neurali del temperamento e dell’affettività e ai disturbi correlati a quelle aree.</p><div class="story-nav"><button class="story-back" id="backHome" aria-label="Indietro">←</button><button class="pill primary rise nav-arrow" id="currentBtn">Cosa faccio attualmente</button></div>
+  </div>
+  <div id="bioCurrent" class="bio-state">
+    <h2>Attualmente</h2><p>Sono Dirigente Medico presso l’ASL di Alessandria e lavoro presso il reparto di Psichiatria dell’Ospedale San Giacomo di Novi Ligure; parallelamente all’attività ospedaliera ricevo privatamente a Genova e Novi Ligure e svolgo consulenze psichiatriche anche online.</p><p>Nel mio lavoro integro il rigore clinico e scientifico con l’attenzione alla dimensione simbolica e alla psicologia analitica di orientamento junghiano.</p><div class="story-nav"><button class="story-back" id="backPast" aria-label="Indietro">←</button><button class="pill primary rise nav-arrow" id="approachBtn">Il mio approccio</button></div>
+  </div>
+</div>
+<div id="approach" class="panelcopy right">
+  <img class="approach-photo" src="foto-giulio.png" alt="Giulio Rocchi">
+  <div class="approach-text">
+    <h2>Il mio approccio</h2>
+    <p>Nel mio lavoro clinico integro la valutazione psichiatrica e l’attenzione alle evidenze scientifiche con alcuni riferimenti alla psicologia analitica di Carl Gustav Jung. Questo orientamento aiuta a non considerare la persona soltanto attraverso i sintomi o la diagnosi, ma a comprenderne la storia, le relazioni, le risorse e le difficoltà nel loro insieme.</p>
+    <p class="objective">L’obiettivo è costruire un percorso di cura che favorisca una maggiore consapevolezza di sé, strumenti più efficaci per affrontare i momenti di difficoltà e un miglior equilibrio nella vita quotidiana.</p>
+    <div class="story-nav"><button class="story-back" id="backCurrent" aria-label="Indietro">←</button><button class="pill primary rise bookAgain nav-arrow">Prenota una visita</button></div>
+  </div>
+</div>
+<button id="homeControl" aria-label="Apri menu" aria-expanded="false">
+  <img src="logogramma-rocchi.png" alt="">
+</button>
+<nav id="quickMenu" aria-hidden="true">
+  <button type="button" id="menuHome">Home</button>
+  <button type="button" id="menuBook">Prenota</button>
+</nav>
+<aside id="booking"><div class="bookingInner"><div class="bookingTop">
+      <button id="bookingHome" class="booking-home" aria-label="Torna alla home">
+        <img src="logogramma-rocchi.png" alt="">
+        <span>Torna alla home</span>
+      </button><img src="logo-rocchi.png" alt="Giulio Rocchi"><button id="closeBooking">×</button></div><h2>Prenota una visita</h2><p>Scegli la sede e la tipologia di visita.</p><section class="loc"><div><h3>Novi Ligure</h3><p>Via Felice Cavallotti 112</p><small>Studio al piano terra; accesso tramite circa 7–8 gradini.</small><div class="locBtns"><a href="#" class="pill primary placeholder">Prima visita</a><a href="#" class="pill placeholder">Visita di controllo</a></div></div><div class="map streetview"><iframe src="https://www.google.com/maps/embed?pb=!4v1791102513833!6m8!1m7!1s4qwcC0tvZtw2Zc9-WMvNCQ!2m2!1d44.76512436559823!2d8.789707756111182!3f44.981870000000015!4f0!5f0.7820865974627469" title="Street View — Via Felice Cavallotti 112, Novi Ligure" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div></section><section class="loc"><div><h3>Genova · Salita Santa Caterina</h3><p>Salita Santa Caterina 6/2 · martedì e venerdì</p><small>Non accessibile a persone con disabilità motoria e/o in carrozzina.</small><div class="locBtns"><a href="#" class="pill primary placeholder">Prima visita</a><a href="#" class="pill placeholder">Visita di controllo</a></div></div><div class="map streetview"><iframe src="https://www.google.com/maps/embed?pb=!4v1791102608461!6m8!1m7!1shE-j4-atwpYGxesdQtoQgA!2m2!1d44.41016412127519!2d8.936002896312873!3f65.15558066534606!4f6.546589470961749!5f0.7820865974627469" title="Street View — Salita Santa Caterina 6/2, Genova" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div></section><section class="loc"><div><h3>Genova · Via Cesarea</h3><p>Via Cesarea 3/10 · sabato</p><small>Non accessibile a persone con disabilità motoria e/o in carrozzina.</small><div class="locBtns"><a href="#" class="pill primary placeholder">Prima visita</a><a href="#" class="pill placeholder">Visita di controllo</a></div></div><div class="map streetview"><iframe src="https://www.google.com/maps/embed?pb=!4v1791102679470!6m8!1m7!1sIn_Mug06pu6ksnSp1IHBsg!2m2!1d44.40445751779528!2d8.942339018346223!3f217.3377792425872!4f-0.30858256817049323!5f0.7820865974627469" title="Street View — Via Cesarea 3/10, Genova" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div></section><section class="loc"><div><h3>Online</h3><p>Consulenza psichiatrica online</p><small></small><div class="locBtns"><a href="#" class="pill primary placeholder">Prima visita</a><a href="#" class="pill placeholder">Visita di controllo</a></div></div><div class="map online-photo"><img src="foto-videochiamata.png" alt="Giulio Rocchi durante una consulenza online"></div></section></div></aside>
 </div>
 <script>
-(()=>{
-  const mobile = innerWidth <= 767;
-  const target = mobile ? 'mobile.html' : 'desktop.html';
-  
-  // File effettivi da precaricare nella cache del browser
-  const assets = [
-    target,
-    'poster-home-hq.jpg',
-    'idle-start.mp4',
-    'video1-web.mp4'
-  ];
+const idle1=document.getElementById('idle1');
+const video1=document.getElementById('video1');
+const video2=document.getElementById('video2');
+const home=document.getElementById('home');
+const bio=document.getElementById('bio');
+const approach=document.getElementById('approach');
+const bioPast=document.getElementById('bioPast');
+const bioCurrent=document.getElementById('bioCurrent');
+const booking=document.getElementById('booking');
 
-  const bar = document.getElementById('bar');
-  const pct = document.getElementById('pct');
-  let loadedCount = 0;
-  let done = false;
+/* Explicit controls: no document-level delegation, so narrative buttons cannot open booking. */
+function openBooking(){
+  booking.classList.add('open');
+}
+function closeBooking(){
+  booking.classList.remove('open');
+}
+document.getElementById('bookHome')?.addEventListener('click',(e)=>{
+  e.preventDefault(); e.stopPropagation(); openBooking();
+});
+document.querySelector('.bookAgain')?.addEventListener('click',(e)=>{
+  e.preventDefault(); e.stopPropagation(); openBooking();
+});
+document.getElementById('menuBook')?.addEventListener('click',(e)=>{
+  e.preventDefault(); e.stopPropagation(); closeQuickMenu(); openBooking();
+});
+document.getElementById('closeBooking')?.addEventListener('click',(e)=>{
+  e.preventDefault(); e.stopPropagation(); closeBooking();
+});
 
-  function updateProgress(value) {
-    bar.style.transform = `scaleX(${value / 100})`;
-    pct.textContent = `${Math.round(value)}%`;
-  }
 
-  function finish() {
-    if (done) return;
-    done = true;
-    updateProgress(100);
-    setTimeout(() => location.replace(target), 200);
-  }
 
-  // Monitora il caricamento effettivo di ciascun file
-  assets.forEach(url => {
-    fetch(url, { cache: 'force-cache' })
-      .then(() => {
-        loadedCount++;
-        const targetPercent = (loadedCount / assets.length) * 100;
-        updateProgress(targetPercent);
-        if (loadedCount >= assets.length) {
-          finish();
-        }
-      })
-      .catch(() => {
-        loadedCount++;
-        if (loadedCount >= assets.length) finish();
-      });
+const bookingHome=document.getElementById('bookingHome');
+bookingHome.addEventListener('click',()=>{ window.location.reload(); });
+const homeControl=document.getElementById('homeControl');
+const quickMenu=document.getElementById('quickMenu');
+const menuHome=document.getElementById('menuHome');
+const menuBook=document.getElementById('menuBook');
+
+function closeQuickMenu(){
+  quickMenu.classList.remove('open');
+  quickMenu.setAttribute('aria-hidden','true');
+  homeControl.setAttribute('aria-expanded','false');
+}
+homeControl.addEventListener('click',(e)=>{
+  e.stopPropagation();
+  const open=!quickMenu.classList.contains('open');
+  quickMenu.classList.toggle('open',open);
+  quickMenu.setAttribute('aria-hidden',String(!open));
+  homeControl.setAttribute('aria-expanded',String(open));
+});
+menuHome.addEventListener('click',()=>{ window.location.reload(); });
+
+document.addEventListener('click',(e)=>{
+  if(!quickMenu.contains(e.target) && e.target!==homeControl) closeQuickMenu();
+});
+
+
+/* Core transition state — restored after the mobile refactor. */
+let playing=false;
+let video2Prepared=false;
+
+function prepareVideo2(){
+  if(video2Prepared)return;
+  video2Prepared=true;
+  video2.preload='auto';
+  video2.load();
+}
+
+function waitForPlayable(video,timeout=2200){
+  return new Promise(resolve=>{
+    if(video.readyState>=3){resolve(true);return}
+    let done=false,timer;
+    const cleanup=()=>{
+      video.removeEventListener('canplay',ready);
+      video.removeEventListener('error',fail);
+      clearTimeout(timer);
+    };
+    const finish=ok=>{
+      if(done)return;
+      done=true;
+      cleanup();
+      resolve(ok);
+    };
+    const ready=()=>finish(true);
+    const fail=()=>finish(false);
+    video.addEventListener('canplay',ready,{once:true});
+    video.addEventListener('error',fail,{once:true});
+    timer=setTimeout(()=>finish(video.readyState>=2),timeout);
+    video.preload='auto';
+    video.load();
   });
+}
 
-  // Timeout di sicurezza massimo
-  setTimeout(finish, 4000);
+function setStoryReading(on){
+  if(window.matchMedia('(max-width:760px)').matches){
+    document.body.classList.toggle('story-reading',on);
+    document.body.style.overflowY='auto';
+  }
+}
+async function playToEnd(video,onDone){
+  if(playing)return;
+  playing=true;
+  video.currentTime=0;
+
+  const playable=await waitForPlayable(video);
+  if(!playable){playing=false;onDone();return}
+
+  /* No flash: keep the previous scene until the first transition frame is ready. */
+  if(video===video1){
+    video.style.opacity='1';
+    idle1.style.opacity='0';
+    idle1.pause();
+  }else if(video===video2){
+    video.style.opacity='1';
+    video1.style.opacity='0';
+  }
+
+  let finished=false;
+  const finish=()=>{
+    if(finished)return;
+    finished=true;
+    playing=false;
+    video.removeEventListener('ended',finish);
+    onDone();
+  };
+  video.addEventListener('ended',finish,{once:true});
+  const p=video.play();
+  if(p)p.catch(finish);
+}
+document.getElementById('who').addEventListener('click',()=>{
+  if(playing)return;
+  home.style.opacity='0';
+  home.style.pointerEvents='none';
+  homeControl.classList.add('visible');
+
+  /* Video 1 is metadata-preloaded; asking play() lets the browser stream it progressively. */
+  /* Keep the current idle visible while Video 1 buffers invisibly. */
+  setTimeout(()=>{
+    playToEnd(video1,()=>{
+      /* Reveal the Chi sono endpoint only AFTER Video 1 has ended. */
+      document.getElementById('posterBio')?.classList.add('endpoint-visible');
+      /* Static breakpoint = last frame of video1. No idle2 asset. */
+      prepareVideo2();
+      setTimeout(()=>{
+        setStoryReading(true);
+        bio.classList.add('show');
+        bioPast.classList.add('active');
+        bioCurrent.classList.remove('active');
+        setTimeout(()=>document.querySelector('#bioPast .rise')?.classList.add('show'),420);
+      },220);
+    });
+  },180);
+});
+
+let approachReady=false;
+
+document.getElementById('currentBtn').addEventListener('click',(e)=>{
+  e.preventDefault();
+  e.stopPropagation();
+  approachReady=false;
+  bioPast.classList.remove('active');
+  setTimeout(()=>{
+    bioCurrent.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+    const approachButton=document.getElementById('approachBtn');
+    approachButton.style.pointerEvents='none';
+    setTimeout(()=>{
+      approachButton.classList.add('show');
+      approachButton.style.pointerEvents='auto';
+      approachReady=true;
+    },650);
+  },280);
+});
+
+document.getElementById('approachBtn').addEventListener('click',(e)=>{
+  e.preventDefault();
+  e.stopPropagation();
+  if(!approachReady || playing)return;
+
+  /* Never expose the next box before the transition starts. */
+  approach.classList.remove('show');
+  setStoryReading(false);
+  bio.classList.remove('show');
+
+  const posterBio=document.getElementById('posterBio');
+  const posterApproach=document.getElementById('posterApproach');
+  if(posterApproach){posterApproach.classList.remove('endpoint-visible');posterApproach.style.opacity='0';}
+
+  setTimeout(()=>{
+    let approachStarted=false;
+    const revealApproach=()=>{
+      if(approachStarted)return;
+      approachStarted=true;
+      if(posterApproach){posterApproach.classList.add('endpoint-visible');posterApproach.style.opacity='1';}
+      approach.classList.add('show');
+      setStoryReading(true);
+      setTimeout(()=>document.querySelector('#approach .rise')?.classList.add('show'),260);
+    };
+
+    const watchEnd=()=>{
+      /* Content starts only during the last ~0.35 s, never before playback. */
+      if(video2.currentTime>0 && video2.duration &&
+         video2.currentTime >= Math.max(0,video2.duration-.35)){
+        revealApproach();
+        video2.removeEventListener('timeupdate',watchEnd);
+      }
+    };
+    video2.addEventListener('timeupdate',watchEnd);
+
+    playToEnd(video2,()=>{
+      video2.removeEventListener('timeupdate',watchEnd);
+      video2.style.opacity='0';
+      if(posterBio){posterBio.classList.remove('endpoint-visible');posterBio.style.opacity='0';}
+      revealApproach();
+    });
+  },180);
+});
+
+document.getElementById('backPast').addEventListener('click',()=>{
+  const posterBio=document.getElementById('posterBio');
+  if(posterBio){posterBio.classList.add('endpoint-visible','visible');posterBio.style.opacity='1';}
+  bioCurrent.classList.remove('active');
+  approachReady=false;
+  setTimeout(()=>{
+    bioPast.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  },220);
+});
+
+document.getElementById('backHome').addEventListener('click',()=>{
+  window.location.reload();
+});
+
+document.getElementById('backCurrent').addEventListener('click',()=>{
+  /* Approach -> exact middle state: static close-tree image + "Attualmente". */
+  approach.classList.remove('show');
+  setStoryReading(false);
+
+  video2.pause(); video2.currentTime=0; video2.style.opacity='0';
+  video1.pause(); video1.style.opacity='0';
+  idle1.pause(); idle1.style.opacity='0';
+
+  const posterApproach=document.getElementById('posterApproach');
+  const posterBio=document.getElementById('posterBio');
+  if(posterApproach){posterApproach.classList.remove('endpoint-visible');posterApproach.style.opacity='0';}
+  if(posterBio){posterBio.classList.add('endpoint-visible');posterBio.style.opacity='1';}
+
+  home.style.opacity='0';
+  home.style.pointerEvents='none';
+  bio.classList.add('show');
+  bioPast.classList.remove('active');
+  bioCurrent.classList.add('active');
+  approachReady=true;
+  setStoryReading(true);
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+/* Load video1 opportunistically after the initial hero has had time to render. */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    video1.preload='auto';
+    video1.load();
+  },900);
+});
+
+/* Unified preloader — same HTML on desktop and mobile. */
+(()=>{
+  const loader=document.getElementById('preloader');
+  const bar=document.getElementById('preloadBar');
+  const pct=document.getElementById('preloadPct');
+  if(!loader||!bar||!pct)return;
+  let p=0,closed=false;
+  const started=performance.now();
+  const paint=()=>{bar.style.transform=`scaleX(${p/100})`;pct.textContent=`${Math.round(p)}%`;};
+  const timer=setInterval(()=>{if(!closed&&p<90){p+=p<55?4:p<78?2:1;paint();}},85);
+  const close=()=>{
+    if(closed)return;closed=true;clearInterval(timer);p=100;paint();
+    const wait=Math.max(0,850-(performance.now()-started));
+    setTimeout(()=>loader.classList.add('done'),wait+150);
+  };
+  const tryIdle=()=>{
+    idle1.muted=true;idle1.defaultMuted=true;idle1.playsInline=true;
+    const q=idle1.play();if(q)q.catch(()=>{});
+  };
+  if(idle1.readyState>=2){tryIdle();close();}
+  else idle1.addEventListener('loadeddata',()=>{tryIdle();close();},{once:true});
+  window.addEventListener('load',()=>setTimeout(()=>{tryIdle();close();},100),{once:true});
+  document.addEventListener('pointerdown',tryIdle,{once:true,passive:true});
+  setTimeout(close,3200);
+  paint();
 })();
 </script>
 </body>
