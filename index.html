@@ -10,7 +10,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#eee9dc;ove
 body{font-family:Georgia,"Times New Roman",serif}
 #stage{position:fixed;inset:0;width:100%;height:100vh;height:100dvh;overflow:hidden;touch-action:auto;background:#eee9dc}
 .media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transition:opacity .28s ease}
-#idle1{z-index:1} #video1{z-index:2;opacity:0}  #video2{z-index:4;opacity:0}
+#idle1{z-index:1} #posterBio{z-index:2} #video1{z-index:3;opacity:0} #posterApproach{z-index:4} #video2{z-index:5;opacity:0}
 
 /* DREAM EFFECT: ivory haze from the edges, intentionally visible. */
 #dream{
@@ -1026,13 +1026,140 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
   }
 }
 
+
+/* ==========================================================
+   MOBILE = NORMAL WEB PAGE
+   No fixed viewport, no nested scroll, no touch interception.
+   Background media is simply cover artwork behind the section.
+   ========================================================== */
+@media(max-width:760px){
+  html,body{
+    height:auto!important;
+    min-height:100%!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior:auto!important;
+    touch-action:auto!important;
+    background:#f6f1e5!important;
+  }
+  body::before{display:none!important}
+
+  #stage{
+    position:relative!important;
+    inset:auto!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:100svh!important;
+    max-height:none!important;
+    overflow:visible!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    transform:none!important;
+    background:#f6f1e5!important;
+  }
+
+  /* Media behaves as ordinary cover background, never as the scroll container. */
+  #idle1,#video1,#video2,
+  #posterHome,#posterBio,#posterApproach,#dream{
+    position:absolute!important;
+    left:0!important;right:0!important;top:0!important;
+    width:100%!important;
+    height:100svh!important;
+    object-fit:cover!important;
+    pointer-events:none!important;
+  }
+
+  #home{
+    position:relative!important;
+    left:auto!important;bottom:auto!important;
+    transform:none!important;
+    width:90%!important;
+    min-height:100svh!important;
+    margin:0 auto!important;
+    padding:62svh 0 7vh!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:flex-end!important;
+  }
+
+  /* Bio becomes normal-flow content. Its background remains the scene artwork. */
+  #bio{
+    position:relative!important;
+    inset:auto!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:100svh!important;
+    max-height:none!important;
+    overflow:visible!important;
+    pointer-events:auto!important;
+    padding:14vh 0 9vh!important;
+  }
+
+  #bioPast,#bioCurrent,
+  body.story-reading #bioPast,body.story-reading #bioCurrent{
+    position:relative!important;
+    inset:auto!important;
+    left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+    width:90%!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0 auto!important;
+    padding:25px 24px!important;
+    overflow:visible!important;
+    transform:none!important;
+    touch-action:auto!important;
+  }
+  #bioPast:not(.active),#bioCurrent:not(.active){display:none!important}
+  #bioPast.active,#bioCurrent.active{display:block!important;opacity:1!important;pointer-events:auto!important}
+
+  #approach,
+  body.story-reading #approach{
+    position:relative!important;
+    inset:auto!important;
+    left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
+    width:90%!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0 auto!important;
+    padding:25px 24px!important;
+    overflow:visible!important;
+    transform:none!important;
+    touch-action:auto!important;
+  }
+  #approach.show{display:flex!important;flex-direction:column!important;opacity:1!important;pointer-events:auto!important}
+  #approach .approach-text{order:1!important}
+  #approach .approach-photo{order:2!important;height:auto!important;aspect-ratio:4/5!important;margin:28px 0 0!important}
+
+  /* Menu remains available while reading. */
+  #homeControl{position:fixed!important}
+  #quickMenu{position:fixed!important}
+
+  /* Booking remains its own normal scrollable page/panel. */
+  #booking{position:fixed!important;overflow-y:auto!important;touch-action:pan-y!important}
+}
+
+
+/* DESKTOP SAFETY: mobile normal-flow experiment must never affect desktop */
+@media(min-width:761px){
+  body.story-reading{overflow:hidden!important}
+  #stage{position:fixed!important}
+  #bio{position:absolute!important}
+}
+
+
+/* Endpoint posters must never appear before their transition finishes. */
+#posterBio,#posterApproach{opacity:0!important}
+#posterBio.endpoint-visible,#posterApproach.endpoint-visible{opacity:1!important}
+
 </style>
 </head>
 <body>
 <div id="stage">
- <video id="idle1" class="media" muted playsinline autoplay loop preload="auto" src="idle-start.mp4" poster="poster-home-hq.webp"></video>
-  <video id="video1" class="media transition-video" muted playsinline preload="none" src="video1-web.mp4" poster="poster-bio-hq.webp"></video>
-  <video id="video2" class="media transition-video" muted playsinline preload="none" src="video2-web.mp4" poster="poster-approach-hq.webp"></video>
+ <img id="posterBio" class="media endpoint-poster" src="poster-bio-hq.webp" alt="" style="opacity:0">
+  <img id="posterApproach" class="media endpoint-poster" src="poster-approach-hq.webp" alt="" style="opacity:0">
+  <video id="idle1" class="media" muted playsinline autoplay loop preload="auto" src="idle-start.mp4" poster="poster-home-hq.webp"></video>
+  <video id="video1" class="media transition-video" muted playsinline preload="none" src="video1-web.mp4"></video>
+  <video id="video2" class="media transition-video" muted playsinline preload="none" src="video2-web.mp4"></video>
  <div id="dream"></div>
 
  <div id="home" class="newcopy"><h1>Giulio Rocchi</h1><div class="sub">Psichiatra | psicoterapeuta</div><div class="city">A Genova, Novi Ligure e online.</div><div class="newactions"><button class="pill primary" id="bookHome">Prenota una visita</button><button class="pill" id="who">Chi sono</button></div></div>
@@ -1114,7 +1241,8 @@ document.addEventListener('click',(e)=>{
   if(!quickMenu.contains(e.target) && e.target!==homeControl) closeQuickMenu();
 });
 
-function setStoryReading(on){ /* intentionally disabled: panels own mobile scrolling */ }
+
+/* Core transition state — restored after the mobile refactor. */
 let playing=false;
 let video2Prepared=false;
 
@@ -1124,30 +1252,52 @@ function prepareVideo2(){
   video2.preload='auto';
   video2.load();
 }
-function openBooking(){booking.classList.add('open')}
-function closeBooking(){booking.classList.remove('open')}
-
-document.getElementById('bookHome').addEventListener('click',openBooking);
-document.querySelector('.bookAgain').addEventListener('click',openBooking);
-document.getElementById('closeBooking').addEventListener('click',closeBooking);
-document.querySelectorAll('.placeholder').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));
 
 function waitForPlayable(video,timeout=2200){
- return new Promise(resolve=>{
-  if(video.readyState>=3){resolve(true);return}
-  let done=false,timer;
-  const cleanup=()=>{video.removeEventListener('canplay',ready);video.removeEventListener('error',fail);clearTimeout(timer)};
-  const finish=ok=>{if(done)return;done=true;cleanup();resolve(ok)};
-  const ready=()=>finish(true),fail=()=>finish(false);
-  video.addEventListener('canplay',ready,{once:true});video.addEventListener('error',fail,{once:true});
-  timer=setTimeout(()=>finish(video.readyState>=2),timeout);video.preload='auto';video.load();
- });
+  return new Promise(resolve=>{
+    if(video.readyState>=3){resolve(true);return}
+    let done=false,timer;
+    const cleanup=()=>{
+      video.removeEventListener('canplay',ready);
+      video.removeEventListener('error',fail);
+      clearTimeout(timer);
+    };
+    const finish=ok=>{
+      if(done)return;
+      done=true;
+      cleanup();
+      resolve(ok);
+    };
+    const ready=()=>finish(true);
+    const fail=()=>finish(false);
+    video.addEventListener('canplay',ready,{once:true});
+    video.addEventListener('error',fail,{once:true});
+    timer=setTimeout(()=>finish(video.readyState>=2),timeout);
+    video.preload='auto';
+    video.load();
+  });
+}
+
+function setStoryReading(on){
+  if(window.matchMedia('(max-width:760px)').matches){
+    document.body.classList.toggle('story-reading',on);
+  }
 }
 async function playToEnd(video,onDone){
  if(playing)return;playing=true;video.currentTime=0;
  const playable=await waitForPlayable(video);
- if(!playable){video.style.opacity='1';playing=false;onDone();return}
- video.style.opacity='1';let finished=false;
+ if(!playable){playing=false;onDone();return}
+
+ /* Only now swap the visible scene: no poster/background flash while buffering. */
+ if(video===video1){
+   video.style.opacity='1';
+   idle1.style.opacity='0';
+   idle1.pause();
+ }else if(video===video2){
+   video.style.opacity='1';
+   video1.style.opacity='0';
+ }
+ let finished=false;
  const finish=()=>{if(finished)return;finished=true;playing=false;video.removeEventListener('ended',finish);onDone()};
  video.addEventListener('ended',finish,{once:true});
  const p=video.play();if(p)p.catch(finish);
@@ -1160,12 +1310,11 @@ document.getElementById('who').addEventListener('click',()=>{
   homeControl.classList.add('visible');
 
   /* Video 1 is metadata-preloaded; asking play() lets the browser stream it progressively. */
-  video1.style.opacity='1';
-  idle1.style.opacity='0';
-  idle1.pause();
-
+  /* Keep the current idle visible while Video 1 buffers invisibly. */
   setTimeout(()=>{
     playToEnd(video1,()=>{
+      /* Reveal the Chi sono endpoint only AFTER Video 1 has ended. */
+      document.getElementById('posterBio')?.classList.add('endpoint-visible');
       /* Static breakpoint = last frame of video1. No idle2 asset. */
       prepareVideo2();
       setTimeout(()=>{
@@ -1202,26 +1351,31 @@ document.getElementById('approachBtn').addEventListener('click',(e)=>{
   e.preventDefault();
   e.stopPropagation();
   if(!approachReady || playing)return;
+
+  /* Never expose the next box before the transition starts. */
+  approach.classList.remove('show');
   setStoryReading(false);
   bio.classList.remove('show');
 
-  setTimeout(()=>{
-    video2.style.opacity='1';
-    video1.style.opacity='0';
+  const posterBio=document.getElementById('posterBio');
+  const posterApproach=document.getElementById('posterApproach');
+  if(posterApproach){posterApproach.classList.remove('endpoint-visible');posterApproach.style.opacity='0';}
 
+  setTimeout(()=>{
     let approachStarted=false;
     const revealApproach=()=>{
       if(approachStarted)return;
       approachStarted=true;
+      if(posterApproach){posterApproach.classList.add('endpoint-visible');posterApproach.style.opacity='1';}
       approach.classList.add('show');
       setStoryReading(true);
-      setTimeout(()=>document.querySelector('#approach .rise')?.classList.add('show'),360);
+      setTimeout(()=>document.querySelector('#approach .rise')?.classList.add('show'),260);
     };
 
-    /* Start revealing the content shortly BEFORE the fronds video ends,
-       so the motion and the editorial panel overlap instead of pausing. */
     const watchEnd=()=>{
-      if(video2.duration && video2.currentTime >= Math.max(0,video2.duration-.75)){
+      /* Content starts only during the last ~0.35 s, never before playback. */
+      if(video2.currentTime>0 && video2.duration &&
+         video2.currentTime >= Math.max(0,video2.duration-.35)){
         revealApproach();
         video2.removeEventListener('timeupdate',watchEnd);
       }
@@ -1230,13 +1384,16 @@ document.getElementById('approachBtn').addEventListener('click',(e)=>{
 
     playToEnd(video2,()=>{
       video2.removeEventListener('timeupdate',watchEnd);
-      revealApproach(); /* fallback if timeupdate did not fire near the end */
+      video2.style.opacity='0';
+      if(posterBio){posterBio.classList.remove('endpoint-visible');posterBio.style.opacity='0';}
+      revealApproach();
     });
-  },330);
+  },180);
 });
 
-
 document.getElementById('backPast').addEventListener('click',()=>{
+  const posterBio=document.getElementById('posterBio');
+  if(posterBio){posterBio.classList.add('endpoint-visible','visible');posterBio.style.opacity='1';}
   bioCurrent.classList.remove('active');
   approachReady=false;
   setTimeout(()=>{
@@ -1250,15 +1407,26 @@ document.getElementById('backHome').addEventListener('click',()=>{
 });
 
 document.getElementById('backCurrent').addEventListener('click',()=>{
-  /* Return to the previous narrative state; keep this reliable on mobile.
-     The reverse-video flourish can be added later without changing navigation. */
+  /* Approach -> exact middle state: static close-tree image + "Attualmente". */
   approach.classList.remove('show');
-  setStoryReading(true);
-  video2.style.opacity='0';
-  video1.style.opacity='1';
+  setStoryReading(false);
+
+  video2.pause(); video2.currentTime=0; video2.style.opacity='0';
+  video1.pause(); video1.style.opacity='0';
+  idle1.pause(); idle1.style.opacity='0';
+
+  const posterApproach=document.getElementById('posterApproach');
+  const posterBio=document.getElementById('posterBio');
+  if(posterApproach){posterApproach.classList.remove('endpoint-visible');posterApproach.style.opacity='0';}
+  if(posterBio){posterBio.classList.add('endpoint-visible');posterBio.style.opacity='1';}
+
+  home.style.opacity='0';
+  home.style.pointerEvents='none';
   bio.classList.add('show');
   bioPast.classList.remove('active');
   bioCurrent.classList.add('active');
+  approachReady=true;
+  setStoryReading(true);
   window.scrollTo({top:0,behavior:'smooth'});
 });
 
@@ -1268,6 +1436,15 @@ window.addEventListener('load',()=>{
     video1.preload='auto';
     video1.load();
   },900);
+});
+
+/* Unified booking CTA handler */
+document.addEventListener('click',(e)=>{
+  const btn=e.target.closest('[data-book], #bookHome, .bookAgain, #menuBook');
+  if(!btn)return;
+  e.preventDefault();
+  e.stopPropagation();
+  booking.classList.add('open');
 });
 </script>
 </body>
