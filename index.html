@@ -910,6 +910,93 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
   background:#f6f1e5 url("poster-home-hq.webp") center/cover no-repeat!important;
 }
 
+
+/* === REAL MOBILE DOCUMENT-SCROLL FIX === */
+@media(max-width:760px){
+  /* Once we enter editorial reading mode, the PAGE is the scroll container. */
+  html{
+    height:auto!important;
+    min-height:100%!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+  }
+  body.story-reading{
+    height:auto!important;
+    min-height:100dvh!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior-y:auto!important;
+    touch-action:pan-y!important;
+  }
+
+  body.story-reading #stage{
+    position:relative!important;
+    inset:auto!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:100dvh!important;
+    max-height:none!important;
+    overflow:visible!important;
+  }
+
+  /* Critical fix: #bio used to remain absolute, so its content never increased
+     the document height. It now participates in normal page flow. */
+  body.story-reading #bio{
+    position:relative!important;
+    inset:auto!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:100dvh!important;
+    overflow:visible!important;
+    pointer-events:auto!important;
+    padding:1px 0!important;
+  }
+
+  body.story-reading #bioPast,
+  body.story-reading #bioCurrent{
+    position:relative!important;
+    inset:auto!important;
+    width:90%!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:18vh auto 12vh!important;
+    overflow:visible!important;
+    transform:none!important;
+    touch-action:auto!important;
+  }
+  body.story-reading #bioPast:not(.active),
+  body.story-reading #bioCurrent:not(.active){
+    display:none!important;
+  }
+
+  /* Approach also becomes genuine document content. */
+  body.story-reading #approach.show{
+    position:relative!important;
+    inset:auto!important;
+    width:90%!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:18vh auto 12vh!important;
+    overflow:visible!important;
+    transform:none!important;
+    touch-action:auto!important;
+  }
+
+  /* The scenery remains fullscreen behind the naturally scrolling copy. */
+  body.story-reading #posterHome,
+  body.story-reading #posterBio,
+  body.story-reading #posterApproach,
+  body.story-reading #idle1,
+  body.story-reading #video1,
+  body.story-reading #video2,
+  body.story-reading #dream{
+    position:fixed!important;
+    inset:0!important;
+    width:100vw!important;
+    height:100dvh!important;
+  }
+}
+
 </style>
 </head>
 <body>
