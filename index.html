@@ -1151,6 +1151,17 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
 #posterBio,#posterApproach{opacity:0!important}
 #posterBio.endpoint-visible,#posterApproach.endpoint-visible{opacity:1!important}
 
+
+/* Booking close control */
+#closeBooking{
+  color:#0d3933!important;
+  -webkit-text-fill-color:#0d3933!important;
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  font-family:Arial,sans-serif!important;
+  line-height:1!important;
+}
+
 </style>
 </head>
 <body>
@@ -1212,6 +1223,27 @@ const bioPast=document.getElementById('bioPast');
 const bioCurrent=document.getElementById('bioCurrent');
 const booking=document.getElementById('booking');
 
+/* Explicit controls: no document-level delegation, so narrative buttons cannot open booking. */
+function openBooking(){
+  booking.classList.add('open');
+}
+function closeBooking(){
+  booking.classList.remove('open');
+}
+document.getElementById('bookHome')?.addEventListener('click',(e)=>{
+  e.preventDefault(); e.stopPropagation(); openBooking();
+});
+document.querySelector('.bookAgain')?.addEventListener('click',(e)=>{
+  e.preventDefault(); e.stopPropagation(); openBooking();
+});
+document.getElementById('menuBook')?.addEventListener('click',(e)=>{
+  e.preventDefault(); e.stopPropagation(); closeQuickMenu(); openBooking();
+});
+document.getElementById('closeBooking')?.addEventListener('click',(e)=>{
+  e.preventDefault(); e.stopPropagation(); closeBooking();
+});
+
+
 
 const bookingHome=document.getElementById('bookingHome');
 bookingHome.addEventListener('click',()=>{ window.location.reload(); });
@@ -1233,10 +1265,7 @@ homeControl.addEventListener('click',(e)=>{
   homeControl.setAttribute('aria-expanded',String(open));
 });
 menuHome.addEventListener('click',()=>{ window.location.reload(); });
-menuBook.addEventListener('click',()=>{
-  closeQuickMenu();
-  openBooking();
-});
+
 document.addEventListener('click',(e)=>{
   if(!quickMenu.contains(e.target) && e.target!==homeControl) closeQuickMenu();
 });
@@ -1284,23 +1313,43 @@ function setStoryReading(on){
   }
 }
 async function playToEnd(video,onDone){
- if(playing)return;playing=true;video.currentTime=0;
- const playable=await waitForPlayable(video);
- if(!playable){playing=false;onDone();return}
+  if(playing)return;
+  playing=true;
+  video.currentTime=0;
 
- /* Only now swap the visible scene: no poster/background flash while buffering. */
- if(video===video1){
-   video.style.opacity='1';
-   idle1.style.opacity='0';
-   idle1.pause();
- }else if(video===video2){
-   video.style.opacity='1';
-   video1.style.opacity='0';
- }
- let finished=false;
- const finish=()=>{if(finished)return;finished=true;playing=false;video.removeEventListener('ended',finish);onDone()};
- video.addEventListener('ended',finish,{once:true});
- const p=video.play();if(p)p.catch(finish);
+  const playable=await waitForPlayable(video);
+  if(!playable){playing=false;onDone();return}
+
+  if(video===video1){
+    video.style.opacity='1';
+    idle1.style.opacity='0';
+    idle1.pause();
+  }else if(video===video2){
+    video.style.opacity='1';
+    video1.style.opacity='0';
+  }
+
+  let finished=false;
+  const cleanup=()=>{
+    video.removeEventListener('ended',finish);
+    video.removeEventListener('timeupdate',nearEnd);
+  };
+  const finish=()=>{
+    if(finished)return;
+    finished=true;
+    cleanup();
+    playing=false;
+    onDone();
+  };
+  const nearEnd=()=>{
+    if(video.duration && video.currentTime>0 &&
+       video.currentTime >= Math.max(0,video.duration-.06)) finish();
+  };
+
+  video.addEventListener('ended',finish,{once:true});
+  video.addEventListener('timeupdate',nearEnd);
+  const p=video.play();
+  if(p)p.catch(finish);
 }
 
 document.getElementById('who').addEventListener('click',()=>{
@@ -1318,6 +1367,7 @@ document.getElementById('who').addEventListener('click',()=>{
       /* Static breakpoint = last frame of video1. No idle2 asset. */
       prepareVideo2();
       setTimeout(()=>{
+        setStoryReading(true);
         bio.classList.add('show');
         bioPast.classList.add('active');
         bioCurrent.classList.remove('active');
@@ -1438,14 +1488,6 @@ window.addEventListener('load',()=>{
   },900);
 });
 
-/* Unified booking CTA handler */
-document.addEventListener('click',(e)=>{
-  const btn=e.target.closest('[data-book], #bookHome, .bookAgain, #menuBook');
-  if(!btn)return;
-  e.preventDefault();
-  e.stopPropagation();
-  booking.classList.add('open');
-});
 </script>
 </body>
 </html>
