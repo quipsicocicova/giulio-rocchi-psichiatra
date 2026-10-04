@@ -833,6 +833,8 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
   }
 }
 
+#bioCurrent:not(.active){pointer-events:none!important}
+#bioCurrent:not(.active) #approachBtn{pointer-events:none!important}
 </style>
 </head>
 <body>
@@ -984,16 +986,29 @@ document.getElementById('who').addEventListener('click',()=>{
   },180);
 });
 
-document.getElementById('currentBtn').addEventListener('click',()=>{
+let approachReady=false;
+
+document.getElementById('currentBtn').addEventListener('click',(e)=>{
+  e.preventDefault();
+  e.stopPropagation();
+  approachReady=false;
   bioPast.classList.remove('active');
   setTimeout(()=>{
     bioCurrent.classList.add('active');
-    setTimeout(()=>document.querySelector('#bioCurrent .rise')?.classList.add('show'),380);
-  },220);
+    const approachButton=document.getElementById('approachBtn');
+    approachButton.style.pointerEvents='none';
+    setTimeout(()=>{
+      approachButton.classList.add('show');
+      approachButton.style.pointerEvents='auto';
+      approachReady=true;
+    },650);
+  },280);
 });
 
-document.getElementById('approachBtn').addEventListener('click',()=>{
-  if(playing)return;
+document.getElementById('approachBtn').addEventListener('click',(e)=>{
+  e.preventDefault();
+  e.stopPropagation();
+  if(!approachReady || playing)return;
   bio.classList.remove('show');
 
   setTimeout(()=>{
