@@ -1144,6 +1144,7 @@ document.getElementById('who').addEventListener('click',()=>{
       prepareVideo2();
       setTimeout(()=>{
         bio.classList.add('show');
+        setStoryReading(true);
         bioPast.classList.add('active');
         bioCurrent.classList.remove('active');
         setTimeout(()=>document.querySelector('#bioPast .rise')?.classList.add('show'),420);
