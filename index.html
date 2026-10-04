@@ -1556,8 +1556,8 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
  <img id="posterBio" class="media endpoint-poster" src="poster-bio-hq.webp" alt="" style="opacity:0">
   <img id="posterApproach" class="media endpoint-poster" src="poster-approach-hq.webp" alt="" style="opacity:0">
   <video id="idle1" class="media" muted playsinline autoplay loop preload="auto" src="idle-start.mp4" poster="poster-home-hq.webp"></video>
-  <video id="video1" class="media transition-video" muted playsinline preload="none" src="video1-web.mp4"></video>
-  <video id="video2" class="media transition-video" muted playsinline preload="none" src="video2-web.mp4"></video>
+  <video id="video1" class="media transition-video" muted playsinline preload="metadata" src="video1-web.mp4"></video>
+  <video id="video2" class="media transition-video" muted playsinline preload="metadata" src="video2-web.mp4"></video>
  <div id="dream"></div>
 
  <div id="home" class="newcopy"><h1>Giulio Rocchi</h1><div class="sub">Psichiatra | psicoterapeuta</div><div class="city">A Genova, Novi Ligure e online.</div><div class="newactions"><button class="pill primary" id="bookHome">Prenota una visita</button><button class="pill" id="who">Chi sono</button></div></div>
@@ -1685,8 +1685,11 @@ let video2Prepared=false;
 function prepareVideo2(){
   if(video2Prepared)return;
   video2Prepared=true;
-  video2.preload='auto';
-  video2.load();
+  if(typeof warmVideo2==='function') warmVideo2();
+  else{
+    video2.preload='auto';
+    video2.load();
+  }
 }
 
 function waitForPlayable(video,timeout=2200){
@@ -1895,13 +1898,50 @@ document.getElementById('backCurrent').addEventListener('click',()=>{
   window.scrollTo({top:0,behavior:'smooth'});
 });
 
-/* Load video1 opportunistically after the initial hero has had time to render. */
+/* SMART PRELOAD PIPELINE
+   1) Home/idle gets the network first.
+   2) Then Video 1 is buffered while the user is on Home.
+   3) Video 2 is buffered only after Video 1 / Bio, so it never competes with the opening.
+*/
+let video1Warm=false;
+let video2Warm=false;
+
+function warmVideo1(){
+  if(video1Warm)return;
+  video1Warm=true;
+  video1.preload='auto';
+  video1.load();
+}
+function warmVideo2(){
+  if(video2Warm)return;
+  video2Warm=true;
+  video2.preload='auto';
+  video2.load();
+}
+
+/* Give the opening idle a head start. requestIdleCallback is ideal when available;
+   timeout fallback keeps this working on Safari/iOS. */
 window.addEventListener('load',()=>{
-  setTimeout(()=>{
-    video1.preload='auto';
-    video1.load();
-  },900);
-});
+  const start=()=>warmVideo1();
+  if('requestIdleCallback' in window){
+    requestIdleCallback(start,{timeout:1400});
+  }else{
+    setTimeout(start,1100);
+  }
+},{once:true});
+
+/* A first real user interaction is also a strong signal to warm the next transition. */
+document.addEventListener('pointerdown',warmVideo1,{once:true,passive:true});
+document.addEventListener('touchstart',warmVideo1,{once:true,passive:true});
+
+/* Once Video 1 starts, prepare Video 2 in the background after a short delay.
+   By the time the user reads Chi sono / Attualmente it should normally be ready. */
+video1.addEventListener('playing',()=>{
+  setTimeout(warmVideo2,700);
+},{once:true});
+
+/* Also warm Video 2 as soon as the Bio endpoint is reached. */
+video1.addEventListener('ended',warmVideo2,{once:true});
 
 /* Unified preloader — same HTML on desktop and mobile. */
 (()=>{
