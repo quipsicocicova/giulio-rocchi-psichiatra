@@ -911,89 +911,118 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
 }
 
 
-/* === REAL MOBILE DOCUMENT-SCROLL FIX === */
-@media(max-width:760px){
-  /* Once we enter editorial reading mode, the PAGE is the scroll container. */
-  html{
-    height:auto!important;
-    min-height:100%!important;
-    overflow-y:auto!important;
-    overflow-x:hidden!important;
+/* =========================================================
+   AUTHORITATIVE MOBILE SCROLL MODEL
+   Mobile only: fixed fullscreen scene + independently scrollable editorial panel.
+   This block supersedes all earlier mobile/story-reading experiments.
+   ========================================================= */
+@media (max-width:760px){
+  html,body{
+    width:100%!important;
+    height:100%!important;
+    overflow:hidden!important;
+    overscroll-behavior:none!important;
   }
-  body.story-reading{
-    height:auto!important;
-    min-height:100dvh!important;
-    overflow-y:auto!important;
-    overflow-x:hidden!important;
-    overscroll-behavior-y:auto!important;
-    touch-action:pan-y!important;
-  }
+  body.story-reading{overflow:hidden!important}
 
+  #stage,
   body.story-reading #stage{
-    position:relative!important;
-    inset:auto!important;
-    width:100%!important;
-    height:auto!important;
-    min-height:100dvh!important;
-    max-height:none!important;
-    overflow:visible!important;
-  }
-
-  /* Critical fix: #bio used to remain absolute, so its content never increased
-     the document height. It now participates in normal page flow. */
-  body.story-reading #bio{
-    position:relative!important;
-    inset:auto!important;
-    width:100%!important;
-    height:auto!important;
-    min-height:100dvh!important;
-    overflow:visible!important;
-    pointer-events:auto!important;
-    padding:1px 0!important;
-  }
-
-  body.story-reading #bioPast,
-  body.story-reading #bioCurrent{
-    position:relative!important;
-    inset:auto!important;
-    width:90%!important;
-    height:auto!important;
-    max-height:none!important;
-    margin:18vh auto 12vh!important;
-    overflow:visible!important;
-    transform:none!important;
-    touch-action:auto!important;
-  }
-  body.story-reading #bioPast:not(.active),
-  body.story-reading #bioCurrent:not(.active){
-    display:none!important;
-  }
-
-  /* Approach also becomes genuine document content. */
-  body.story-reading #approach.show{
-    position:relative!important;
-    inset:auto!important;
-    width:90%!important;
-    height:auto!important;
-    max-height:none!important;
-    margin:18vh auto 12vh!important;
-    overflow:visible!important;
-    transform:none!important;
-    touch-action:auto!important;
-  }
-
-  /* The scenery remains fullscreen behind the naturally scrolling copy. */
-  body.story-reading #posterHome,
-  body.story-reading #posterBio,
-  body.story-reading #posterApproach,
-  body.story-reading #idle1,
-  body.story-reading #video1,
-  body.story-reading #video2,
-  body.story-reading #dream{
     position:fixed!important;
     inset:0!important;
     width:100vw!important;
     height:100dvh!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow:hidden!important;
+  }
+
+  #bio,
+  body.story-reading #bio{
+    position:absolute!important;
+    inset:0!important;
+    width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    max-height:none!important;
+    padding:0!important;
+    overflow:visible!important;
+    pointer-events:none!important;
+  }
+
+  #bioPast,#bioCurrent,
+  body.story-reading #bioPast,
+  body.story-reading #bioCurrent{
+    position:absolute!important;
+    left:5%!important;
+    right:auto!important;
+    top:auto!important;
+    bottom:max(4%,env(safe-area-inset-bottom))!important;
+    width:90%!important;
+    height:auto!important;
+    max-height:78dvh!important;
+    margin:0!important;
+    padding:25px 24px 30px!important;
+    transform:none!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior:contain!important;
+    touch-action:pan-y!important;
+    box-sizing:border-box!important;
+  }
+  #bioPast:not(.active),#bioCurrent:not(.active){
+    display:none!important;
+    pointer-events:none!important;
+  }
+  #bioPast.active,#bioCurrent.active{
+    display:block!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+
+  #approach,
+  body.story-reading #approach{
+    position:absolute!important;
+    left:5%!important;
+    right:auto!important;
+    top:auto!important;
+    bottom:max(3%,env(safe-area-inset-bottom))!important;
+    width:90%!important;
+    height:auto!important;
+    max-height:82dvh!important;
+    margin:0!important;
+    padding:24px!important;
+    transform:none!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior:contain!important;
+    touch-action:pan-y!important;
+    box-sizing:border-box!important;
+  }
+  #approach.show{
+    display:flex!important;
+    flex-direction:column!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+  #approach .approach-text{order:1!important}
+  #approach .approach-photo{
+    order:2!important;
+    height:auto!important;
+    max-height:none!important;
+    aspect-ratio:4/5!important;
+    margin:28px 0 0!important;
+    object-fit:cover!important;
+  }
+
+  #bioPast p,#bioCurrent p,#approach p,
+  #bioPast h2,#bioCurrent h2,#approach h2,
+  #approach img{
+    touch-action:pan-y!important;
+  }
+  #bioPast button,#bioCurrent button,#approach button{
+    touch-action:manipulation!important;
   }
 }
 
@@ -1085,10 +1114,7 @@ document.addEventListener('click',(e)=>{
   if(!quickMenu.contains(e.target) && e.target!==homeControl) closeQuickMenu();
 });
 
-function setStoryReading(on){
-  document.body.classList.toggle('story-reading',on);
-  if(on) requestAnimationFrame(()=>window.scrollTo({top:0,behavior:'smooth'}));
-}
+function setStoryReading(on){ /* intentionally disabled: panels own mobile scrolling */ }
 let playing=false;
 let video2Prepared=false;
 
@@ -1144,7 +1170,6 @@ document.getElementById('who').addEventListener('click',()=>{
       prepareVideo2();
       setTimeout(()=>{
         bio.classList.add('show');
-        setStoryReading(true);
         bioPast.classList.add('active');
         bioCurrent.classList.remove('active');
         setTimeout(()=>document.querySelector('#bioPast .rise')?.classList.add('show'),420);
