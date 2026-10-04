@@ -1924,9 +1924,9 @@ function warmVideo2(){
 window.addEventListener('load',()=>{
   const start=()=>warmVideo1();
   if('requestIdleCallback' in window){
-    requestIdleCallback(start,{timeout:1400});
+    requestIdleCallback(start,{timeout:650});
   }else{
-    setTimeout(start,1100);
+    setTimeout(start,500);
   }
 },{once:true});
 
@@ -1937,7 +1937,7 @@ document.addEventListener('touchstart',warmVideo1,{once:true,passive:true});
 /* Once Video 1 starts, prepare Video 2 in the background after a short delay.
    By the time the user reads Chi sono / Attualmente it should normally be ready. */
 video1.addEventListener('playing',()=>{
-  setTimeout(warmVideo2,700);
+  setTimeout(warmVideo2,2000);
 },{once:true});
 
 /* Also warm Video 2 as soon as the Bio endpoint is reached. */
