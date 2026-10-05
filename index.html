@@ -1548,6 +1548,25 @@ button,.pill,a,#homeControl,#bookingHome,#closeBooking{
   #booking{z-index:120!important}
 }
 
+
+/* MOBILE ONLY — remove residual repeated Home poster below first viewport */
+@media(max-width:760px){#stage{background:#f6f1e5!important}}
+
+/* MOBILE HOME HEIGHT FIX — approved Home visuals/content untouched */
+@media(max-width:760px){
+  #stage{
+    height:100svh!important;
+    min-height:100svh!important;
+    max-height:100svh!important;
+    overflow:hidden!important;
+  }
+  #home{
+    height:100svh!important;
+    min-height:100svh!important;
+    max-height:100svh!important;
+  }
+}
+
 </style>
 </head>
 <body>
